@@ -9,7 +9,6 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QIcon, QPixmap
 
 
 class StockFundament_Dialog(object):
@@ -29,7 +28,6 @@ class StockFundament_Dialog(object):
         self.horizontalLayout.addItem(spacerItem)
         self.pushButton = QtWidgets.QPushButton(Dialog)
         self.pushButton.setObjectName("pushButton")
-
         self.horizontalLayout.addWidget(self.pushButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.tableWidget = QtWidgets.QTableWidget(Dialog)
@@ -46,3 +44,4 @@ class StockFundament_Dialog(object):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
         self.label.setText(_translate("Dialog", "TextLabel"))
+        self.pushButton.setText(_translate("Dialog", "PushButton"))

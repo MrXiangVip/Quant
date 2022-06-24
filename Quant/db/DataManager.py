@@ -7,7 +7,7 @@ import sqlalchemy
 import tushare as ts
 import xpinyin
 from xpinyin import Pinyin
-
+import  jieba
 import settings
 
 pd.set_option('display.max_columns', None)
@@ -22,7 +22,8 @@ class DataManager():
     def __init__(self):
         self.engine = sqlalchemy.create_engine(prefix+DataFile)
         self.pro = ts.pro_api('ac147953b15f6ee963c164fc8ee8ef5228e58b75e5953ba5997ef117')
-
+        jieba.load_userdict('./company.csv')
+        self.focus_words= self.pro.stock_basic().name.tolist()
     # 将名称转成拼音
     def getAbbrevation(self, word):
         word = word.replace('-','')
@@ -32,7 +33,7 @@ class DataManager():
         wordAbbrevation +=' '
         wordAbbrevation += word
         return wordAbbrevation
-
+#    #
     def getStockBasic(self):
         print("getStockBasic")
         # 先从数据库中查表， 如果表不存在则从tushare 获取并replace到数据库
@@ -59,26 +60,7 @@ class DataManager():
             self.index_basic.to_sql('index_constant',self.engine, if_exists="replace")
             print("get from tushare.index_basic ")
         return  self.index_basic
-    # 获取新闻数据
-    def getNews(self, datestamp):
-        print("get news", datestamp )
 
-        # 先从数据库中查询 这天的新闻,如果数据库中不存在表，则去tushare 获取并插入表中
-        start_date=str(datestamp - datetime.timedelta(days=1))
-        end_date= str(datestamp)
-        print( start_date, end_date )
-        try:
-            sql = '''select * from news where  datetime between {} and {}'''.format([start_date, end_date])
-            print("sql ",sql)
-            self.news_df = pd.read_sql_query( sql, self.engine )
-        except Exception as e:
-            print("error ", e )
-            self.news_df = self.pro.news(start_date=start_date, end_date=end_date)
-        #如果数据库中没有这天的新闻, 则去 tushare 获取并插入表中
-        if self.news_df.empty :
-                self.news_df = self.pro.news( start_date=start_date, end_date=end_date)
-                self.news_df.to_sql('news', self.engine)
-        return  self.news_df
     # 获取自选表数据
     def getOptional(self):
         print("getOptional")
@@ -98,6 +80,48 @@ class DataManager():
         except Exception as e:
             print("error ", e)
         return
+    def updateOptional(self, new_optional):
+        print("update optional")
+        try:
+            new_optional.to_sql( 'optional', self.engine, index=False, if_exists='replace')
+        except Exception as e:
+            print("error ", e)
+        return
+#   #
+    def getFocus(self, content):
+        words = jieba.lcut(content)  # 默认是精确模式
+        print("分词后 ", words)
+        focus =[]
+        for word in words:
+            if (word in self.focus_words)  and (word not in focus):
+                focus.append( word )
+        return focus
+    # 获取新闻数据
+    def getNews(self, datestamp):
+        print("get news", datestamp )
+        # if len(self.company)
+        today = datetime.datetime.today().date()
+        # 先从数据库中查询 这天的新闻,如果数据库中不存在表，则去tushare 获取并插入表中
+        start_date=str(datestamp)
+        end_date= str(datestamp + datetime.timedelta(days=1))
+        print( start_date, end_date )
+        if datestamp==today:
+            self.news_df = self.pro.news(start_date=start_date, limit=2000)
+            self.news_df['focus'] = self.news_df['content'].apply( self.getFocus )
+        else:
+            try:
+                sql = '''select * from news where  datetime between {} and {}'''.format([start_date, end_date])
+                print("sql ",sql)
+                self.news_df = pd.read_sql_query( sql, self.engine )
+            except Exception as e:
+                print("error ", e )
+                self.news_df = self.pro.news(start_date=start_date, end_date=end_date)
+            #如果数据库中没有这天的新闻, 则去 tushare 获取并插入表中
+            if self.news_df.empty :
+                    self.news_df = self.pro.news( start_date=start_date, end_date=end_date)
+                    self.news_df.to_sql('news', self.engine)
+        return  self.news_df
+
 if __name__ == '__main__':
     dataManager = DataManager()
     # dataManager.getStockBasic()

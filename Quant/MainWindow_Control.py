@@ -1,19 +1,20 @@
 import threading
 from datetime import datetime
 
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMainWindow, QCompleter, QLCDNumber
 from PyQt5 import QtCore, QtWidgets
 
+import settings
 from MainWindow_View import Ui_MainWindow
-from NewsWidget_Control import NewsEngineWidget
+from NewsWidget_Control import NewsWidget
 
 from OptionalWidget_Control import OptionalFormWidget
 # from TradeFormWidget_Model import TradeFormWidget
 from StockFundament_Control import StockFundamentControl
 # from db.DBManager import stock_abbrev
 from db.DataManager import DataManager
-
+import tushare as ts
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     updateRecordSignal = pyqtSignal( object )
@@ -34,6 +35,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.lcdNumber.setDigitCount(8)
         self.lcdNumber.display( datetime.now().strftime('%Y-%m-%d %H:%M:%S') )
 
+        self.sz_data= ts.get_realtime_quotes('sh')
+        self.label.setText('SZ: '+ self.sz_data.loc[0].price  )
+
+        self.hs_data= ts.get_realtime_quotes('hs300')
+        self.label_2.setText('HS: ' +self.hs_data.loc[0].price  )
+
         # self.tab = QtWidgets.QWidget()
         self.tab = OptionalFormWidget(self)
         self.tab.setObjectName("tab")
@@ -43,8 +50,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tab_2.setObjectName("tab_2")
         self.tabWidget.addTab(self.tab_2, "")
         # self.tab_2 = QtWidgets.QWidget()
-        self.tab_3 = QtWidgets.QWidget()
-        # self.tab_3 = NewsEngineWidget(self)
+        # self.tab_3 = QtWidgets.QWidget()
+        self.tab_3 = NewsWidget(self)
         self.tab_3.setObjectName("tab_3")
         self.tabWidget.addTab(self.tab_3, "")
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "自选"))
@@ -63,19 +70,33 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         #
         self.lineEdit.returnPressed.connect(self.showStockDialog )
         self.updateRecordSignal.connect( self.updateRecordForm )
-        self.updateMainWindow()
-
+        self.createTickTimer()
     def updateMainWindow(self):
         print("更新窗口")
         self.lcdNumber.display(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-        self.createTickTimer()
+        self.sz_data= ts.get_realtime_quotes('sh')
+        self.label.setText('SZ: ' +self.sz_data.loc[0].price  )
 
+        if self.sz_data.loc[0].price >self.sz_data.loc[0].pre_close:
+            self.label.setStyleSheet("color:red")
+        else:
+            self.label.setStyleSheet("color:green")
+
+        self.hs_data= ts.get_realtime_quotes('hs300')
+        self.label_2.setText( 'HS: '+self.hs_data.loc[0].price  )
+        if self.hs_data.loc[0].price >self.hs_data.loc[0].pre_close:
+            self.label_2.setStyleSheet("color:red")
+        else:
+            self.label_2.setStyleSheet("color:green")
     def createTickTimer(self):
         # self.updateTableWidget()
         # global timer
         # 每天最多访问该接口2次  ,将定时器的间隔设置为12 个小时
-        timer = threading.Timer(1, self.updateMainWindow)
-        timer.start()
+        # timer = threading.Timer(settings.time_tick, self.updateMainWindow)
+        # timer.start()
+        self.timer = QTimer(self)
+        self.timer.timeout.connect( self.updateMainWindow )
+        self.timer.start(settings.time_tick)
 
     def updateRecordForm(self, df):
         print("更新record 表单")
@@ -91,10 +112,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.name_row.empty:
             print(" empty name ")
             return
+        self.name_row = self.name_row.reset_index()
         self.stockFundamentDailog = StockFundamentControl( self.name_row )
         # self.addDialog.addStockSignal.connect(self.addStock)
+        self.lineEdit.setText("")
         self.stockFundamentDailog.show()
-        self.lineEdit.clear()
 
 
 
