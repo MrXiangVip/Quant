@@ -6,15 +6,18 @@ from PyQt5.QtWidgets import QMainWindow, QCompleter, QLCDNumber
 from PyQt5 import QtCore, QtWidgets
 
 import settings
-from MainWindow_View import Ui_MainWindow
-from NewsWidget_Control import NewsWidget
+from IndustryWidget_Control import IndustryFormWidget
 
+from MainWindow_View import Ui_MainWindow
+from BrokerWidget_Control import BrokerWidget
+from NewsWidget_Control import NewsWidget
 from OptionalWidget_Control import OptionalFormWidget
 # from TradeFormWidget_Model import TradeFormWidget
 from StockFundament_Control import StockFundamentControl
 # from db.DBManager import stock_abbrev
 from db.DataManager import DataManager
 import tushare as ts
+from decimal import  *
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     updateRecordSignal = pyqtSignal( object )
@@ -45,18 +48,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tab = OptionalFormWidget(self)
         self.tab.setObjectName("tab")
         self.tabWidget.addTab(self.tab, "")
-        self.tab_2 = QtWidgets.QWidget()
-        # self.tab_2 = OptionalFormWidget(self)
+
+        # self.tab_2 = QtWidgets.QWidget()
+        self.tab_2 = IndustryFormWidget(self)
         self.tab_2.setObjectName("tab_2")
         self.tabWidget.addTab(self.tab_2, "")
-        # self.tab_2 = QtWidgets.QWidget()
+
         # self.tab_3 = QtWidgets.QWidget()
         self.tab_3 = NewsWidget(self)
         self.tab_3.setObjectName("tab_3")
         self.tabWidget.addTab(self.tab_3, "")
+
+        # self.tab_4 = QtWidgets.QWidget()
+        self.tab_4 = BrokerWidget(self)
+        self.tab_4.setObjectName("tab_4")
+        self.tabWidget.addTab(self.tab_4, "")
+
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "自选"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "行业"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("MainWindow", "事件"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("MainWindow", "券商"))
         self.tabWidget.setCurrentIndex(0)
 
         self.stock_basic =  DataManager().getStockBasic()
@@ -75,19 +86,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print("更新窗口")
         self.lcdNumber.display(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         self.sz_data= ts.get_realtime_quotes('sh')
-        self.label.setText('SZ: ' +self.sz_data.loc[0].price  )
-
+        # self.label.setText('SZ: ' +self.sz_data.loc[0].price  )
         if self.sz_data.loc[0].price >self.sz_data.loc[0].pre_close:
             self.label.setStyleSheet("color:red")
+            self.label.setText( 'SZ: '+self.sz_data.loc[0].price  +'↑'+str( Decimal(self.sz_data.loc[0].price) - Decimal(self.sz_data.loc[0].pre_close) ) )
         else:
             self.label.setStyleSheet("color:green")
+            self.label.setText( 'SZ: '+self.sz_data.loc[0].price  +'↓'+str( Decimal(self.sz_data.loc[0].price)- Decimal(self.sz_data.loc[0].pre_close) ) )
 
         self.hs_data= ts.get_realtime_quotes('hs300')
-        self.label_2.setText( 'HS: '+self.hs_data.loc[0].price  )
+        # self.label_2.setText( 'HS: '+self.hs_data.loc[0].price  )
         if self.hs_data.loc[0].price >self.hs_data.loc[0].pre_close:
             self.label_2.setStyleSheet("color:red")
+            self.label_2.setText( 'HS: '+self.hs_data.loc[0].price  +'↑'+str( Decimal(self.hs_data.loc[0].price)- Decimal(self.hs_data.loc[0].pre_close) ) )
         else:
             self.label_2.setStyleSheet("color:green")
+            self.label_2.setText( 'HS: '+self.hs_data.loc[0].price  +'↓'+str( Decimal(self.hs_data.loc[0].price)- Decimal(self.hs_data.loc[0].pre_close) ) )
+
     def createTickTimer(self):
         # self.updateTableWidget()
         # global timer

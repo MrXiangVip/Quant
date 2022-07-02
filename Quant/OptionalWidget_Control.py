@@ -52,7 +52,7 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
                     self.tableWidget.setCellWidget(row, col, lineEdit)
         self.createTickTimer()
     def updateTableWidget(self):
-        print("updateTableWidget")
+        print("update optional table widget")
         self.data = DataManager().getOptional()
         self.primaylist = self.data['primary'].tolist()
         print(self.primaylist)
