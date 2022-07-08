@@ -148,6 +148,10 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
         print("createRightMenu postion", position)
         self.groupBox_menu = QMenu(self)
 
+        self.actionHead = QAction(QIcon('icons/up2Top.svg'), u'置顶',self)
+        self.actionHead.setShortcut('Ctrl+S')  # 设置快捷键
+        self.groupBox_menu.addAction(self.actionHead)  # 把动作A选项添加到菜单
+
         self.actionUp = QAction(QIcon('icons/up.svg'), u'上移',self)
         self.actionUp.setShortcut('Ctrl+S')  # 设置快捷键
         self.groupBox_menu.addAction(self.actionUp)  # 把动作A选项添加到菜单
@@ -158,6 +162,7 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
         self.actionDelete = QAction(QIcon('icons/deleteRow.svg'), u'删除', self)
         self.groupBox_menu.addAction(self.actionDelete)
 
+        self.actionHead.triggered.connect(self.swapHead )  # 将动作A触发时连接到槽函数 button
         self.actionUp.triggered.connect(self.swapForward )  # 将动作A触发时连接到槽函数 button
         # self.actionDown.triggered.connect(self.button_2)
         self.actionDelete.triggered.connect(self.deleteRow )
@@ -172,13 +177,28 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
         elif curRow == 0:
             print("")
         else:
-            curData = self.data.loc[curRow]
-            forwardData = self.data.loc[curRow - 1]
-            self.data.loc[curRow - 1] = curData
-            self.data.loc[curRow] = forwardData
+            curData = self.data.iloc[curRow].copy()
+            forwardData = self.data.iloc[curRow - 1].copy()
+            self.data.iloc[curRow - 1] = curData
+            self.data.iloc[curRow] = forwardData
             DataManager().updateOptional(self.data)
             # self.tableWidget.setCurrentIndex(curRow-1)
             self.tableWidget.rowAt(curRow - 1)
+    def swapHead(self):
+        print("swap head")
+        curRow = self.tableWidget.currentRow()
+        if curRow == -1:
+            print("未选择一行")
+        elif curRow == 0:
+            print("")
+        else:
+            curData = self.data.iloc[curRow].copy()
+            headData = self.data.iloc[0].copy()
+            self.data.iloc[0] = curData
+            self.data.iloc[curRow] = headData
+            DataManager().updateOptional(self.data)
+            # self.tableWidget.setCurrentIndex(curRow-1)
+            self.tableWidget.rowAt(curRow)
     def deleteRow(self):
         print("delete a row ")
         row = self.tableWidget.currentRow()

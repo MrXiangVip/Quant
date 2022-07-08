@@ -70,9 +70,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("MainWindow", "券商"))
         self.tabWidget.setCurrentIndex(0)
 
-        self.stock_basic =  DataManager().getStockBasic()
+        self.stock_basic =  DataManager().stock_basic
         print("stock basic shape ", self.stock_basic.shape )
-        self.index_basic = DataManager().getIndexBasic()
+        self.index_basic = DataManager().index_basic
         print("index basic shape", self.index_basic.shape )
         self.completer = QCompleter( list(self.stock_basic['abbrevation']) +list(self.index_basic['abbrevation']) )
         self.completer.setFilterMode(QtCore.Qt.MatchContains)
@@ -120,18 +120,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print("窗体关闭")
 
     def showStockDialog(self):
+
         print("show stock dialog",self.lineEdit.text())
-        self.name_row = self.stock_basic.loc[self.stock_basic['abbrevation']== self.lineEdit.text()]
-        if self.name_row.empty:
-            self.name_row = self.index_basic.loc[self.index_basic['abbrevation']== self.lineEdit.text()]
-        if self.name_row.empty:
+        self.ts_code=None
+        self.index_code=None
+        ts_codes = self.stock_basic.loc[self.stock_basic['abbrevation']== self.lineEdit.text()].ts_code
+        self.ts_code = ts_codes.iloc[0]
+
+        if self.ts_code ==None:
+            index_codes = self.index_basic.loc[self.index_basic['abbrevation']== self.lineEdit.text()].ts_code
+            self.index_code = index_codes.iloc[0]
+        if self.ts_code ==None and self.index_code ==None:
             print(" empty name ")
             return
-        self.name_row = self.name_row.reset_index()
-        self.stockFundamentDailog = StockFundamentControl( self.name_row )
+        # self.name_row = self.name_row.reset_index()
+        self.stockDailog = StockFundamentControl( ts_code=self.ts_code, index_code=self.index_code )
         # self.addDialog.addStockSignal.connect(self.addStock)
         self.lineEdit.setText("")
-        self.stockFundamentDailog.show()
+        self.stockDailog.show()
 
 
 

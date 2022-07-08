@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QWidget, QAbstractItemView, QTreeWidgetItem
 
 from IndustryWidget_View import Industry_Ui_Form
 from db.DataManager import DataManager
+from settings import ths_member_columns
 
 
 class IndustryFormWidget(QWidget, Industry_Ui_Form):
@@ -23,8 +24,10 @@ class IndustryFormWidget(QWidget, Industry_Ui_Form):
         self.table_rows = self.data.shape[0]
         table_columns = self.data.shape[1]
         input_table_header = self.data.columns.values.tolist()
-        self.treeWidget.setColumnCount(table_columns)
-        self.treeWidget.setHeaderLabels(input_table_header)
+        # self.treeWidget.setColumnCount(table_columns)
+        # self.treeWidget.setHeaderLabels(input_table_header)
+        self.treeWidget.setColumnCount( len(ths_member_columns))
+        self.treeWidget.setHeaderLabels( ths_member_columns )
         self.treeWidget.setEditTriggers(QAbstractItemView.DoubleClicked)
         # self.treeWidget.setSortingEnabled( True )
         # self.treeWidget.hideColumn(0)
@@ -45,8 +48,11 @@ class IndustryFormWidget(QWidget, Industry_Ui_Form):
         print("item expanded ", tree_widget_item)
         ts_code = tree_widget_item.text(1)
         print(ts_code)
-        child_data = DataManager().get_ths_member(ts_code)
-        print("child data ", child_data)
+        # child_data = DataManager().get_ths_member(ts_code)
+        child_data = DataManager().get_real_ths_member(ts_code)
+        if child_data.empty or child_data.shape[0]==1:
+            child_data = DataManager().get_ths_member(ts_code)
+        print("child data \n", child_data)
         child_rows = child_data.shape[0]
         tree_widget_item.takeChildren()
         for child_row in range(child_rows):

@@ -40,6 +40,8 @@ class BrokerWidget(QWidget, Broker_Ui_Form):
             date = date.toPyDate()
         self.data = DataManager().getBrokerReportData( date )
         # 删除日期这列
+        if self.data.empty :
+            return
         self.data.drop( labels='report_date', axis =1, inplace=True )
         self.table_rows = self.data.shape[0]
         table_columns = self.data.shape[1]

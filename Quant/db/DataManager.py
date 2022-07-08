@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import sqlalchemy
 import tushare as ts
+import akshare as ak
 import xpinyin
 from xpinyin import Pinyin
 import  jieba
@@ -23,8 +24,9 @@ class DataManager():
         self.engine = sqlalchemy.create_engine(prefix+DataFile)
         self.pro = ts.pro_api('ac147953b15f6ee963c164fc8ee8ef5228e58b75e5953ba5997ef117')
         jieba.load_userdict('./company.csv')
-        self.stock_baic = self.getStockBasic()
-        self.focus_words= self.stock_baic.name.tolist()
+        self.stock_basic = self.getStockBasic()
+        self.index_basic = self.getIndexBasic()
+        self.focus_words= self.stock_basic.name.tolist()
     # 将名称转成拼音
     def getAbbrevation(self, word):
         word = word.replace('-','')
@@ -45,11 +47,12 @@ class DataManager():
         except Exception as e:
             print("error ", e)
             stock_baic = self.pro.stock_basic()
-            stock_baic['abbrevation']=self.stock_baic['name'].apply( self.getAbbrevation )
+            stock_baic['abbrevation']=stock_baic['name'].apply( self.getAbbrevation )
             stock_baic.to_sql('stock_constant',self.engine, if_exists="replace")
             print("get from tushare.stock_basic ")
         return  stock_baic
     def getIndexBasic(self):
+        print("getIndexBasic")
         try:
             sql ='''select * from index_constant'''
             self.index_basic = pd.read_sql_query(sql, self.engine)
@@ -131,13 +134,16 @@ class DataManager():
     #
     def getBrokerReportData(self, report_date=0, ts_code=0):
         print("卖方盈利预测数据 ",  report_date )
-        if ts_code==0:
-            data = self.pro.report_rc( report_date= report_date.strftime("%Y%m%d") )
-        elif report_date ==0:
-            data = self.pro.report_rc( ts_code= ts_code )
-        else:
-            data = self.pro.report_rc( ts_code= ts_code, report_date= report_date.strftime("%Y%m%d") )
-
+        data = pd.DataFrame()
+        try:
+            if ts_code==0:
+                data = self.pro.report_rc( report_date= report_date.strftime("%Y%m%d") )
+            elif report_date ==0:
+                data = self.pro.report_rc( ts_code= ts_code )
+            else:
+                data = self.pro.report_rc( ts_code= ts_code, report_date= report_date.strftime("%Y%m%d") )
+        except Exception as e:
+            print("error ", e)
         return data
 
 
@@ -164,12 +170,41 @@ class DataManager():
         print("get ths member")
         df = self.pro.ths_member( ts_code= ts_code)
         return  df
+    # 用akshare 获取实时的指数行情
+    def get_real_ths_member(self , ts_code):
+        print("get real ths member ")
+        index_code= ts_code[0:6]
+
+        stock_board_cons_ths_df = ak.stock_board_cons_ths(symbol= index_code)
+        stock_board_cons_ths_df['流通市值'] = stock_board_cons_ths_df['流通市值'].str.replace('亿', '').astype(float)
+        stock_board_cons_ths_df = stock_board_cons_ths_df.sort_values( by='流通市值').drop(columns='序号').reset_index()
+        stock_board_cons_ths_df['流通市值'] = stock_board_cons_ths_df['流通市值'].apply(lambda x: str(x) + '亿')
+
+        return  stock_board_cons_ths_df
 
     def get_forecast_vip(self):
         df = self.pro.forecast_vip()
+        data = self.stock_basic[['ts_code','name']]
+        df = data.merge(df, how='right', on='ts_code')
         return  df
+
+    # 描述：获取财报披露计划日期
+    def get_disclosure_date(self):
+        df = self.pro.disclosure_date(end_date='20220630')
+        return  df
+    # 主营
+    def get_stock_zygc(self, ts_code):
+        print( "get stock zygc", ts_code)
+        code = ts_code[0:6]
+        stock_zygc_ym_df = ak.stock_zygc_ym(symbol = code)
+        return  stock_zygc_ym_df
+# 单例模式
+DataManagerInstance =DataManager()
+
 if __name__ == '__main__':
     dataManager = DataManager()
     # dataManager.getStockBasic()
     dataManager.getIndexBasic()
     # dataManager.getNews( datetime.date.today() )
+
+    # https: // www.zhihu.com / column / akshare
