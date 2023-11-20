@@ -1,3 +1,12 @@
+import logging
+import sys
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+log_console = logging.StreamHandler(sys.stderr)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+log_console.setFormatter(formatter)
+logger.addHandler(log_console)
 
 news_tick = 1000*60*1
 time_tick =1000

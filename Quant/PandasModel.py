@@ -32,7 +32,7 @@ class PandasModel(QtCore.QAbstractTableModel):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
             return self.data.columns[col]
         return None
-        # print('row {}, col {}, role {}'.format(row, col, role))
+        # logger.debug('row {}, col {}, role {}'.format(row, col, role))
         # if role == qt.DisplayRole:
         #     if row == 0 and col == 1:
         #         return '<--left'

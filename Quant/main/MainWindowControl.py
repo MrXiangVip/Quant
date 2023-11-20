@@ -3,9 +3,11 @@ from datetime import datetime
 from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMainWindow, QCompleter, QLCDNumber
 from PyQt5 import QtCore
+import logging
 
 import settings
 from industry.IndustryWidgetControl import IndustryFormWidget
+from main.MainWindowModel import MainWindowModel
 
 from main.MainWindowView import Ui_MainWindow
 from broker.BrokerWidgetControl import BrokerWidget
@@ -13,13 +15,12 @@ from news.NewsWidgetControl import NewsWidget
 from optional.OptionalWidgetControl import OptionalFormWidget
 # from TradeFormWidget_Model import TradeFormWidget
 from stockfundment.StockFundamentControl import StockFundamentControl
-# from db.DBManager import stock_abbrev
-from db.DataManager import DataManager
 import tushare as ts
 from decimal import  *
+from settings import logger
 
 class MainWindow(QMainWindow, Ui_MainWindow):
-    updateRecordSignal = pyqtSignal( object )
+    # updateRecordSignal = pyqtSignal( object )
 
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
@@ -28,7 +29,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.initWindow()
 
     def initWindow(self):
-        print("init main window")
+        logger.debug("init main window")
         # self.tab = QtWidgets.QWidget()
         _translate = QtCore.QCoreApplication.translate
 
@@ -69,20 +70,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("MainWindow", "Broker"))
         self.tabWidget.setCurrentIndex(0)
 
-        self.stock_basic =  DataManager().stock_basic
-        print("stock basic shape ", self.stock_basic.shape )
-        self.index_basic = DataManager().index_basic
-        print("index basic shape", self.index_basic.shape )
-        self.completer = QCompleter( list(self.stock_basic['abbrevation']) +list(self.index_basic['abbrevation']) )
+        # self.stock_basic =  MainWindowModel().stock_basic
+        # logger.debug("stock basic shape ", self.stock_basic.shape )
+        # self.index_basic = MainWindowModel().index_basic
+        # logger.debug("index basic shape", self.index_basic.shape )
+        self.completer = QCompleter( MainWindowModel().abbrevationList )
         self.completer.setFilterMode(QtCore.Qt.MatchContains)
         self.completer.setCompletionMode(QCompleter.PopupCompletion)
         self.lineEdit.setCompleter( self.completer)
         #
         self.lineEdit.returnPressed.connect(self.showStockDialog )
-        self.updateRecordSignal.connect( self.updateRecordForm )
+        # self.updateRecordSignal.connect( self.updateRecordForm )
         self.createTickTimer()
     def updateMainWindow(self):
-        print("更新窗口")
+        logger.debug("更新窗口")
         self.lcdNumber.display(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         self.sz_data= ts.get_realtime_quotes('sh')
         # self.label.setText('SZ: ' +self.sz_data.loc[0].price  )
@@ -113,14 +114,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.timer.start(settings.time_tick)
 
     def updateRecordForm(self, df):
-        print("更新record 表单")
+        logger.debug("更新record 表单")
         self.tab_2.updateRecordForm(df)
     def closeEvent(self,event):
-        print("窗体关闭")
+        logger.debug("窗体关闭")
 
     def showStockDialog(self):
 
-        print("show stock dialog",self.lineEdit.text())
+        logger.debug("show stock dialog",self.lineEdit.text())
         self.ts_code=None
         self.index_code=None
         ts_codes = self.stock_basic.loc[self.stock_basic['abbrevation']== self.lineEdit.text()].ts_code
@@ -130,7 +131,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             index_codes = self.index_basic.loc[self.index_basic['abbrevation']== self.lineEdit.text()].ts_code
             self.index_code = index_codes.iloc[0]
         if self.ts_code ==None and self.index_code ==None:
-            print(" empty name ")
+            logger.debug(" empty name ")
             return
         # self.name_row = self.name_row.reset_index()
         self.stockDailog = StockFundamentControl( ts_code=self.ts_code, index_code=self.index_code )

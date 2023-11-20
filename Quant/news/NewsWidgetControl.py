@@ -7,9 +7,10 @@ from PyQt5.QtWidgets import QWidget, QAbstractItemView, QHeaderView, QTableWidge
 
 # import Utils
 import settings
+from news.NewsWidgetModel import NewsWidgetModel
 from news.NewsWidgetView import News_Ui_Form
+from settings import logger
 
-from db.DataManager import DataManager
 
 
 class NewsWidget(QWidget, News_Ui_Form):
@@ -23,9 +24,9 @@ class NewsWidget(QWidget, News_Ui_Form):
         today = datetime.datetime.today()
         self.last_timestamp = datetime.datetime.now().replace(microsecond=0)
         # primary 列中的数据读取为str
-        self.news_df =  DataManager().getNews(today)
+        self.news_df =  NewsWidgetModel().getNews(today)
         self.news_df.drop(columns='title', inplace=True)
-        print("news_df ", self.news_df.shape)
+        logger.debug("news_df ", self.news_df.shape)
         self.table_rows = self.news_df.shape[0]
         table_columns = self.news_df.shape[1]
         input_table_header = self.news_df.columns.values.tolist()
@@ -50,7 +51,7 @@ class NewsWidget(QWidget, News_Ui_Form):
                     widget = QWidget()
                     horizontalLayout = QtWidgets.QHBoxLayout()
                     items = self.news_df.loc[row][col]
-                    print( type(items), items)
+                    logger.debug( type(items), items)
                     for item in items:
                         label = QLabel()
                         palete = QPalette()
@@ -72,12 +73,12 @@ class NewsWidget(QWidget, News_Ui_Form):
         self.createTickTimer()
 
     def updateTableWidget(self):
-        print("update news table widget")
+        logger.debug("update news table widget")
         now = datetime.datetime.now().replace(microsecond=0)
 
-        self.update_data = DataManager().getNews( self.last_timestamp, now)
+        self.update_data = NewsWidgetModel().getNews( self.last_timestamp, now)
         self.update_data.drop(columns='title', inplace=True)
-        print("update data ", self.update_data.shape)
+        logger.debug("update data ", self.update_data.shape)
         if self.update_data.shape[0] :
             self.last_timestamp = now
             table_rows  =  self.update_data.shape[0]
@@ -106,7 +107,7 @@ class NewsWidget(QWidget, News_Ui_Form):
                         widget = QWidget()
                         horizontalLayout = QtWidgets.QHBoxLayout()
                         items = self.update_data.loc[row][col]
-                        print(type(items), items)
+                        logger.debug(type(items), items)
                         for item in items:
                             label = QLabel()
                             palete = QPalette()
@@ -124,11 +125,11 @@ class NewsWidget(QWidget, News_Ui_Form):
                         self.tableWidget.setItem(row, col, newItem)
             self.news_df = self.news_df.append(self.update_data)
         else:
-            print("empty data")
+            logger.debug("empty data")
         self.tableWidget.resizeRowsToContents()
 
     def createTickTimer(self):
-        print("create tick timer")
+        logger.debug("create tick timer")
         self.timer = QTimer(self)
         self.timer.timeout.connect( self.updateTableWidget )
         self.timer.start(settings.news_tick)

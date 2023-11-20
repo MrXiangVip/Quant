@@ -4,8 +4,9 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QHeaderView, QAbstractItemView, QTableWidgetItem
 
 from forecast.ForecastVipDialog import ForecastVip_Ui_Dialog
-from db.DataManager import DataManager
+from forecast.ForecastVipModel import ForecastVipModel
 
+from settings import logger
 
 class ForecastVipDialogControl(QDialog,ForecastVip_Ui_Dialog):
 
@@ -18,12 +19,12 @@ class ForecastVipDialogControl(QDialog,ForecastVip_Ui_Dialog):
         self.init_dialog()
 
     def init_dialog(self):
-        print("init dialog")
+        logger.debug("init dialog")
         self.update_dialog()
 
     def update_dialog(self):
-        print("update dialog")
-        self.data = DataManager().get_forecast_vip()
+        logger.debug("update dialog")
+        self.data = ForecastVipModel().get_forecast_vip()
         self.table_rows = self.data.shape[0]
         table_columns = self.data.shape[1]
         input_table_header = self.data.columns.values.tolist()

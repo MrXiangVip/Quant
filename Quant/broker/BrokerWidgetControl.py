@@ -1,11 +1,12 @@
 from PyQt5.QtCore import QDate, Qt
 from PyQt5.QtWidgets import QWidget, QAbstractItemView, QHeaderView, QTableWidgetItem
 
+from broker.BrokerWidgetModel import BrokerWidgetModel
 from broker.BrokerWidgetView import Broker_Ui_Form
 import datetime
+from settings import logger
 
 from forecast.ForecastVipDialogControl import ForecastVipDialogControl
-from db.DataManager import DataManager
 
 
 class BrokerWidget(QWidget, Broker_Ui_Form):
@@ -34,11 +35,11 @@ class BrokerWidget(QWidget, Broker_Ui_Form):
         self.pushButton.clicked.connect( self.showForecastVipDialog )
         self.updateWindow( today )
     def updateWindow(self, date ):
-        print("update window")
+        logger.debug("update window")
         # self.data = DataManager().getBrokerReport( date )
         if isinstance(date, QDate):
             date = date.toPyDate()
-        self.data = DataManager().getBrokerReportData( date )
+        self.data = BrokerWidgetModel().getBrokerReportData( date )
         # 删除日期这列
         if self.data.empty :
             return
@@ -74,7 +75,7 @@ class BrokerWidget(QWidget, Broker_Ui_Form):
         # self.tableWidget.resizeColumnsToContents()
         self.tableWidget.resizeRowsToContents()
     def onDateChanged(self, date):
-        print( "date ",date)
+        logger.debug( "date ",date)
         self.updateWindow( date )
 
     def showForecastVipDialog(self):

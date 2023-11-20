@@ -5,11 +5,12 @@ from PyQt5.QtWidgets import QWidget, QAbstractItemView, QHeaderView, QTableWidge
 
 # import Utils
 import settings
+from optional.OptionalWidgetModel import OptionalWidgetModel
 from optional.OptionalWidgetView import Optional_Ui_Form
 import pandas as pd
 
-from db.DataManager import DataManager
 import tushare as ts
+from settings import logger
 
 class OptionalFormWidget(QWidget, Optional_Ui_Form):
     def __init__(self, root):
@@ -17,9 +18,10 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
         self.root = root
         self.setupUi(self)
         self.initWidget()
+
     def initWidget(self):
         # primary 列中的数据读取为str
-        self.data =  DataManager().getOptional()
+        self.data =  OptionalWidgetModel().getOptional()
 
         table_rows = self.data.shape[0]
         table_columns = self.data.shape[1]
@@ -49,25 +51,25 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
                     self.tableWidget.setCellWidget(row, col, lineEdit)
         self.createTickTimer()
     def updateTableWidget(self):
-        print("update optional table widget")
-        self.data = DataManager().getOptional()
+        logger.debug("update optional table widget")
+        self.data = OptionalWidgetModel().getOptional()
         self.primaylist = self.data['primary'].tolist()
-        print(self.primaylist)
+        logger.debug(self.primaylist)
         if len(self.primaylist)==0:
-            print(" primary empty ")
+            logger.debug(" primary empty ")
         try:
+            logger.debug("1.获取实时数据", self.realData)
             self.realData = ts.get_realtime_quotes(self.primaylist)
             self.realData = self.realData[['name', 'open', 'pre_close', 'price', 'high', 'low']]
-            print("1.获取实时数据", self.realData)
             # 2. 更新df
-            print("2.更新df")
+            logger.debug("2.更新df")
             self.data['open'] = self.realData['open']
             self.data['pre_close'] = self.realData['pre_close']
             self.data['price'] = self.realData['price']
             self.data['high'] = self.realData['high']
             self.data['low'] = self.realData['low']
         except Exception as e:
-            print("error", e)
+            logger.debug(("error", e))
         table_rows = self.data.shape[0]
         table_columns = self.data.shape[1]
         # 设置表格列数
@@ -94,7 +96,7 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
                     newItem.setBackground( QColor(230,230,230,255) )
                     self.tableWidget.setItem(row, col, newItem)
                 elif col in [8]:
-                    print(row, col,'->',  self.data.loc[row][col] )
+                    logger.debug((row, col,'->',  self.data.loc[row][col] ))
                     if  pd.notnull(self.data.loc[row][col]) and self.data.loc[row][col].isdecimal():
                         if self.data.loc[row][8] > self.data.loc[row][5]:
                             item = self.tableWidget.cellWidget( row, col)
@@ -108,7 +110,7 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
                             item.setPalette(palete)
 
                 elif col in [9]:
-                    print(row, col,'->',  self.data.loc[row][col] )
+                    logger.debug((row, col,'->',  self.data.loc[row][col] ))
                     if pd.notnull(self.data.loc[row][col]) and self.data.loc[row][col].isdecimal():
                         if self.data.loc[row][9] < self.data.loc[row][5]:
                             item = self.tableWidget.cellWidget( row, col)
@@ -124,7 +126,7 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
         # self.createTickTimer()
 
     def createTickTimer(self):
-        print("create tick timer")
+        logger.debug("create tick timer")
         # self.timer = threading.Timer( settings.time_tick, self.updateTableWidget)
         # self.timer.start()
         self.timer = QTimer(self)
@@ -133,16 +135,16 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
     def itemEdit(self):
         curRow = self.tableWidget.currentRow()
         curCol = self.tableWidget.currentColumn()
-        print("编辑了 ", curRow, curCol)
+        logger.debug("编辑了 ", curRow, curCol)
         cell = self.tableWidget.cellWidget(curRow, curCol)
-        print(type(cell), str(cell.text()))
+        logger.debug(type(cell), str(cell.text()))
         self.data.iloc[curRow, curCol] = str(cell.text())
-        print(self.data)
-        DataManager().updateOptional( self.data )
+        logger.debug(self.data)
+        OptionalWidgetModel().updateOptional( self.data )
 
     def createRightMenu(self,position):
         # 菜单对象
-        print("createRightMenu postion", position)
+        logger.debug("createRightMenu postion", position)
         self.groupBox_menu = QMenu(self)
 
         self.actionHead = QAction(QIcon('../icons/up2Top.svg'), u'置顶', self)
@@ -167,39 +169,40 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
         self.groupBox_menu.popup(QCursor.pos())  # 声明当鼠标在groupBox控件上右击时，在鼠标位置显示右键菜单   ,exec_,popup两个都可以，
 
     def swapForward(self):
-        print("swap ")
+        logger.debug("swap ")
         curRow = self.tableWidget.currentRow()
         if curRow == -1:
-            print("未选择一行")
+            logger.debug("未选择一行")
         elif curRow == 0:
-            print("")
+            logger.debug("")
         else:
             curData = self.data.iloc[curRow].copy()
             forwardData = self.data.iloc[curRow - 1].copy()
             self.data.iloc[curRow - 1] = curData
             self.data.iloc[curRow] = forwardData
-            DataManager().updateOptional(self.data)
+            OptionalWidgetModel().updateOptional(self.data)
             # self.tableWidget.setCurrentIndex(curRow-1)
             self.tableWidget.rowAt(curRow - 1)
     def swapHead(self):
-        print("swap head")
+        logger.debug("swap head")
         curRow = self.tableWidget.currentRow()
         if curRow == -1:
-            print("未选择一行")
+            logger.debug("未选择一行")
         elif curRow == 0:
-            print("")
+            logger.debug("")
         else:
             curData = self.data.iloc[curRow].copy()
             headData = self.data.iloc[0].copy()
             self.data.iloc[0] = curData
             self.data.iloc[curRow] = headData
-            DataManager().updateOptional(self.data)
+            OptionalWidgetModel().updateOptional(self.data)
             # self.tableWidget.setCurrentIndex(curRow-1)
             self.tableWidget.rowAt(curRow)
+
     def deleteRow(self):
-        print("delete a row ")
+        logger.debug("delete a row ")
         row = self.tableWidget.currentRow()
-        print(row)
+        logger.debug(row)
         self.tableWidget.removeRow(row)
         self.data.drop(labels=row, inplace=True)
-        DataManager().updateOptional( self.data )
+        OptionalWidgetModel().updateOptional( self.data )

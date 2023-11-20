@@ -1,13 +1,18 @@
+#
+#
+#
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QDialog, QHeaderView
 
 import settings
 from PandasModel import PandasModel
+from db.DataManager import DataManager
 from stockfundment.StockFundamentDialog import StockFundament_Dialog
 import pandas as pd
+from settings import logger
 
-from db.DataManager import DataManagerInstance
+from stockfundment.StockFundamentModel import StockFundamentModel
 
 
 class StockFundamentControl(QDialog,StockFundament_Dialog):
@@ -16,13 +21,13 @@ class StockFundamentControl(QDialog,StockFundament_Dialog):
         super(StockFundamentControl,self).__init__()
         # self.root = root
         self.setupUi(self)
-        print( ts_code, index_code, name )
+        logger.debug( ts_code, index_code, name )
 
         self.ts_code = ts_code
         self.index_code = index_code
         self.name = name
-        self.stock_basic = DataManagerInstance.stock_basic
-        self.index_basic = DataManagerInstance.index_basic
+        self.stock_basic = DataManager.stock_basic
+        self.index_basic = DataManager.index_basic
         if self.ts_code!=None :
             self.name = self.stock_basic.loc[ self.stock_basic.ts_code == self.ts_code].name
             self.label.setText( ts_code+" "+str(self.name.values) )
@@ -45,15 +50,15 @@ class StockFundamentControl(QDialog,StockFundament_Dialog):
         #
         self.verticalLayout = QtWidgets.QVBoxLayout(self.tab)
         self.tableview = QtWidgets.QTableView(self.tab)
-        data = DataManagerInstance.get_stock_zygc( ts_code= self.ts_code )
-        print( data )
+        data = StockFundamentModel().get_stock_zygc( ts_code= self.ts_code )
+        logger.debug( data )
         myModel = PandasModel(data)
         self.tableview.setModel(myModel)
         self.tableview.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.verticalLayout.addWidget(self.tableview)
 
     def addOption(self):
-        print( "addOption")
+        logger.debug( "addOption")
         self.new_df = pd.DataFrame(data=None, columns=settings.optional_columns)
         if self.ts_code!=None:
             self.new_df['name'] = self.name
@@ -64,8 +69,8 @@ class StockFundamentControl(QDialog,StockFundament_Dialog):
             self.new_df['name'] = self.name
             self.new_df['primary']= settings.stock_dic.get(self.name)
             self.new_df['code']= self.index_code
-            print('name',  self.new_df['name'])
+            logger.debug('name',  self.new_df['name'])
         # self.new_df.fillna( value=None)
-        print( "new_df \n", self.new_df)
-        DataManagerInstance.addOptional( self.new_df )
+        logger.debug( "new_df \n", self.new_df)
+        StockFundamentModel.addOptional( self.new_df )
         return
