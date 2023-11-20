@@ -1,14 +1,11 @@
-import threading
-from datetime import datetime
-
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QColor, QPalette, QIcon, QCursor
-from PyQt5.QtWidgets import QWidget, QLCDNumber, QAbstractItemView, QHeaderView, QTableWidgetItem, QLineEdit, QMenu, \
+from PyQt5.QtWidgets import QWidget, QAbstractItemView, QHeaderView, QTableWidgetItem, QLineEdit, QMenu, \
     QAction
 
 # import Utils
 import settings
-from OptionalWidget_View import Optional_Ui_Form
+from optional.OptionalWidgetView import Optional_Ui_Form
 import pandas as pd
 
 from db.DataManager import DataManager
@@ -148,18 +145,18 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
         print("createRightMenu postion", position)
         self.groupBox_menu = QMenu(self)
 
-        self.actionHead = QAction(QIcon('icons/up2Top.svg'), u'置顶',self)
+        self.actionHead = QAction(QIcon('../icons/up2Top.svg'), u'置顶', self)
         self.actionHead.setShortcut('Ctrl+S')  # 设置快捷键
         self.groupBox_menu.addAction(self.actionHead)  # 把动作A选项添加到菜单
 
-        self.actionUp = QAction(QIcon('icons/up.svg'), u'上移',self)
+        self.actionUp = QAction(QIcon('../icons/up.svg'), u'上移', self)
         self.actionUp.setShortcut('Ctrl+S')  # 设置快捷键
         self.groupBox_menu.addAction(self.actionUp)  # 把动作A选项添加到菜单
 
-        self.actionDown = QAction(QIcon('icons/down.svg'), u'下移', self)
+        self.actionDown = QAction(QIcon('../icons/down.svg'), u'下移', self)
         self.groupBox_menu.addAction(self.actionDown)
 
-        self.actionDelete = QAction(QIcon('icons/deleteRow.svg'), u'删除', self)
+        self.actionDelete = QAction(QIcon('../icons/deleteRow.svg'), u'删除', self)
         self.groupBox_menu.addAction(self.actionDelete)
 
         self.actionHead.triggered.connect(self.swapHead )  # 将动作A触发时连接到槽函数 button

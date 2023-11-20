@@ -1,9 +1,13 @@
+#
+#
+#
 import sys
+
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication
 
-from MainWindow_Control import MainWindow
+from main.MainWindowControl import MainWindow
 import pandas as pd
 
 pd.set_option('display.width', 300)

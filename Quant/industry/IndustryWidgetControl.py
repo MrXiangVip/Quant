@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QAbstractItemView, QTreeWidgetItem
 
-from IndustryWidget_View import Industry_Ui_Form
+from industry.IndustryWidgetView import Industry_Ui_Form
 from db.DataManager import DataManager
 from settings import ths_member_columns
 
@@ -10,7 +10,7 @@ class IndustryFormWidget(QWidget, Industry_Ui_Form):
         super(IndustryFormWidget, self).__init__(root)
         self.root = root
         self.setupUi(self)
-        self.initWindow()
+        # self.initWindow()
 
     def initWindow(self):
         self.updateWindow()

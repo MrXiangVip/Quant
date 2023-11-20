@@ -1,19 +1,18 @@
-import threading
 from datetime import datetime
 
 from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMainWindow, QCompleter, QLCDNumber
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore
 
 import settings
-from IndustryWidget_Control import IndustryFormWidget
+from industry.IndustryWidgetControl import IndustryFormWidget
 
-from MainWindow_View import Ui_MainWindow
-from BrokerWidget_Control import BrokerWidget
-from NewsWidget_Control import NewsWidget
-from OptionalWidget_Control import OptionalFormWidget
+from main.MainWindowView import Ui_MainWindow
+from broker.BrokerWidgetControl import BrokerWidget
+from news.NewsWidgetControl import NewsWidget
+from optional.OptionalWidgetControl import OptionalFormWidget
 # from TradeFormWidget_Model import TradeFormWidget
-from StockFundament_Control import StockFundamentControl
+from stockfundment.StockFundamentControl import StockFundamentControl
 # from db.DBManager import stock_abbrev
 from db.DataManager import DataManager
 import tushare as ts
@@ -64,10 +63,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tab_4.setObjectName("tab_4")
         self.tabWidget.addTab(self.tab_4, "")
 
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "自选"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "行业"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("MainWindow", "事件"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("MainWindow", "券商"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "optional"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "industry"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("MainWindow", "environment"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("MainWindow", "Broker"))
         self.tabWidget.setCurrentIndex(0)
 
         self.stock_basic =  DataManager().stock_basic

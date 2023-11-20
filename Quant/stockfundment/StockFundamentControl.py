@@ -4,10 +4,10 @@ from PyQt5.QtWidgets import QDialog, QHeaderView
 
 import settings
 from PandasModel import PandasModel
-from StockFundament_Dialog import StockFundament_Dialog
+from stockfundment.StockFundamentDialog import StockFundament_Dialog
 import pandas as pd
 
-from db.DataManager import DataManager, DataManagerInstance
+from db.DataManager import DataManagerInstance
 
 
 class StockFundamentControl(QDialog,StockFundament_Dialog):
@@ -33,7 +33,7 @@ class StockFundamentControl(QDialog,StockFundament_Dialog):
 
         #xshx add
         self.pushButton.setText( "加自选")
-        self.pushButton.setIcon( QIcon(QPixmap("./icons/sub.svg")))
+        self.pushButton.setIcon(QIcon(QPixmap("../icons/sub.svg")))
         self.pushButton.clicked.connect( self.addOption )
 
         self.tabWidget.setTabText(0, "财报")

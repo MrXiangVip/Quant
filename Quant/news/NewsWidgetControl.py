@@ -1,15 +1,13 @@
 import datetime
-import threading
 
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QPalette, QColor
-from PyQt5.QtWidgets import QWidget, QLCDNumber, QAbstractItemView, QHeaderView, QTableWidgetItem, QLabel
+from PyQt5.QtWidgets import QWidget, QAbstractItemView, QHeaderView, QTableWidgetItem, QLabel
 
 # import Utils
 import settings
-from NewsWidget_View import News_Ui_Form
-import pandas as pd
+from news.NewsWidgetView import News_Ui_Form
 
 from db.DataManager import DataManager
 
@@ -19,7 +17,7 @@ class NewsWidget(QWidget, News_Ui_Form):
         super(NewsWidget, self).__init__(root)
         self.root = root
         self.setupUi(self)
-        self.initWindow()
+        # self.initWindow()
 
     def initWindow(self):
         today = datetime.datetime.today()

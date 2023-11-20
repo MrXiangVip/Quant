@@ -42,15 +42,16 @@ class DataManager():
         # 先从数据库中查表， 如果表不存在则从tushare 获取并replace到数据库
         try:
             sql ='''select * from stock_constant'''
-            stock_baic = pd.read_sql_query(sql,self.engine)
+            stock_basic = pd.read_sql_query(sql,self.engine)
             print("sql ", sql)
         except Exception as e:
             print("error ", e)
-            stock_baic = self.pro.stock_basic()
-            stock_baic['abbrevation']=stock_baic['name'].apply( self.getAbbrevation )
-            stock_baic.to_sql('stock_constant',self.engine, if_exists="replace")
+            stock_basic = self.pro.stock_basic()
+            stock_basic['abbrevation']=stock_basic['name'].apply( self.getAbbrevation )
+            stock_basic.to_sql('stock_constant',self.engine, if_exists="replace")
             print("get from tushare.stock_basic ")
-        return  stock_baic
+        return  stock_basic
+
     def getIndexBasic(self):
         print("getIndexBasic")
         try:
@@ -77,6 +78,7 @@ class DataManager():
             self.optional = pd.DataFrame( data=None, columns=settings.optional_columns)
             self.optional.to_sql( 'optional', self.engine, index=False)
         return  self.optional
+
     def addOptional(self, new_optional):
         print( "addOptional")
         try:
@@ -103,31 +105,24 @@ class DataManager():
     # 获取新闻数据
     def getNews(self, start_date, end_date=0):
         print("get news","start date ->", start_date, "end date ->", end_date )
+
         today = datetime.datetime.today().date()
         # 先从数据库中查询 这天的新闻,如果数据库中不存在表，则去tushare 获取并插入表中
         self.news_df = pd.DataFrame()
-        if start_date.date() ==  today:
-            if end_date==0:
-                self.news_df = self.pro.news( start_date = str(start_date.date()) )
-                self.news_df['focus'] = self.news_df['content'].apply( self.getFocus )
+        try:
+            if start_date.date() ==  today:
+                if end_date==0:
+                    self.news_df = self.pro.news( start_date = str(start_date.date()) )
+                    self.news_df['focus'] = self.news_df['content'].apply( self.getFocus )
+
+                else:
+                    self.news_df = self.pro.news( start_date=str(start_date), end_date= str(end_date) )
+                    self.news_df['focus'] = self.news_df['content'].apply( self.getFocus )
 
             else:
-                self.news_df = self.pro.news( start_date=str(start_date), end_date= str(end_date) )
-                self.news_df['focus'] = self.news_df['content'].apply( self.getFocus )
-                # try:
-                #     sql = '''select * from news where  datetime between {} and {}'''.format([start_date, end_date])
-                #     print("sql ",sql)
-                #     self.news_df = pd.read_sql_query( sql, self.engine )
-                # except Exception as e:
-                #     print("error ", e )
-                #     self.news_df = self.pro.news(start_date=start_date, end_date=end_date)
-                # #如果数据库中没有这天的新闻, 则去 tushare 获取并插入表中
-                # if self.news_df.empty :
-                #         self.news_df = self.pro.news( start_date=start_date, end_date=end_date)
-                #         self.news_df.to_sql('news', self.engine)
-
-        else:
-            print( "start ", start_date, " end ",end_date)
+                print( "start ", start_date, " end ",end_date)
+        except Exception as e:
+            print("error", e)
         return  self.news_df
     #
 

@@ -3,7 +3,7 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QHeaderView, QAbstractItemView, QTableWidgetItem
 
-from ForecastVip_Dialog import ForecastVip_Ui_Dialog
+from forecast.ForecastVipDialog import ForecastVip_Ui_Dialog
 from db.DataManager import DataManager
 
 
