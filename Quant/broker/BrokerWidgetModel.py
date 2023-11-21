@@ -10,7 +10,7 @@ from settings import logger
 class BrokerWidgetModel(DataManager):
     #
     def getBrokerReportData(self, report_date=0, ts_code=0):
-        logger.debug("卖方盈利预测数据 ",  report_date )
+        logger.debug(("卖方盈利预测数据 ",  report_date ))
         data = pd.DataFrame()
         try:
             if ts_code==0:
@@ -20,5 +20,5 @@ class BrokerWidgetModel(DataManager):
             else:
                 data = self.pro.report_rc( ts_code= ts_code, report_date= report_date.strftime("%Y%m%d") )
         except Exception as e:
-            logger.debug("error ", e)
+            logger.debug(("error ", e))
         return data

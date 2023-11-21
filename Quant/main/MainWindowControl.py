@@ -13,7 +13,6 @@ from main.MainWindowView import Ui_MainWindow
 from broker.BrokerWidgetControl import BrokerWidget
 from news.NewsWidgetControl import NewsWidget
 from optional.OptionalWidgetControl import OptionalFormWidget
-# from TradeFormWidget_Model import TradeFormWidget
 from stockfundment.StockFundamentControl import StockFundamentControl
 import tushare as ts
 from decimal import  *
@@ -70,10 +69,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("MainWindow", "Broker"))
         self.tabWidget.setCurrentIndex(0)
 
-        # self.stock_basic =  MainWindowModel().stock_basic
-        # logger.debug("stock basic shape ", self.stock_basic.shape )
-        # self.index_basic = MainWindowModel().index_basic
-        # logger.debug("index basic shape", self.index_basic.shape )
+        self.stock_basic =  MainWindowModel().stock_basic
+        logger.debug(("stock basic shape ", self.stock_basic.shape ))
+        self.index_basic = MainWindowModel().index_basic
+        logger.debug(("index basic shape", self.index_basic.shape ))
+
         self.completer = QCompleter( MainWindowModel().abbrevationList )
         self.completer.setFilterMode(QtCore.Qt.MatchContains)
         self.completer.setCompletionMode(QCompleter.PopupCompletion)

@@ -11,7 +11,7 @@ class NewsWidgetModel(DataManager):
 
     # 获取新闻数据
     def getNews(self, start_date, end_date=0):
-        logger.debug("get news","start date ->", start_date, "end date ->", end_date )
+        logger.debug(("get news","start date ->", start_date, "end date ->", end_date ))
 
         today = datetime.datetime.today().date()
         # 先从数据库中查询 这天的新闻,如果数据库中不存在表，则去tushare 获取并插入表中

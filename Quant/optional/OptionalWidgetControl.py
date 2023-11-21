@@ -58,7 +58,7 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
         if len(self.primaylist)==0:
             logger.debug(" primary empty ")
         try:
-            logger.debug("1.获取实时数据", self.realData)
+            logger.debug("1.获取实时数据")
             self.realData = ts.get_realtime_quotes(self.primaylist)
             self.realData = self.realData[['name', 'open', 'pre_close', 'price', 'high', 'low']]
             # 2. 更新df

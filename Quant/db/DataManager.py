@@ -27,7 +27,7 @@ class DataManager():
     engine = sqlalchemy.create_engine(prefix + DataFile)
     pro = ts.pro_api('ac147953b15f6ee963c164fc8ee8ef5228e58b75e5953ba5997ef117')
     jieba.load_userdict('./company.csv')
-    # 先从网络获取列表信息, 如果网络上没有 从本地数据查找, 最后 再将列表保存到数据库中
+    # stock_basic 每小时最多访问该接口一次, 先从网络获取列表信息, 如果网络上没有 从本地数据查找, 最后 再将列表保存到数据库中
     stock_basic=pd.DataFrame()
     index_basic=pd.DataFrame()
     try:
@@ -42,8 +42,8 @@ class DataManager():
         sql ='''select * from index_constant'''
         index_basic = pd.read_sql_query(sql, engine)
     finally:
-        logger.debug(("stock_basic ", stock_basic.shape, stock_basic.columns))
-        logger.debug(("index_basic ", index_basic.shape, index_basic.columns))
+        logger.debug(("初始化 stock_basic ", stock_basic.shape, stock_basic.columns))
+        logger.debug(("初始化 index_basic ", index_basic.shape, index_basic.columns))
 
 
     def __init__(self):
