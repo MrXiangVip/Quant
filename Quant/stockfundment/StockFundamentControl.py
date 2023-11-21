@@ -4,14 +4,14 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QDialog, QHeaderView
+import pandas as pd
 
 import settings
+from settings import logger
 from PandasModel import PandasModel
 from db.DataManager import DataManager
+from optional.OptionalWidgetModel import OptionalWidgetModel
 from stockfundment.StockFundamentDialog import StockFundament_Dialog
-import pandas as pd
-from settings import logger
-
 from stockfundment.StockFundamentModel import StockFundamentModel
 
 
@@ -72,5 +72,5 @@ class StockFundamentControl(QDialog,StockFundament_Dialog):
             logger.debug('name',  self.new_df['name'])
         # self.new_df.fillna( value=None)
         logger.debug( "new_df \n", self.new_df)
-        StockFundamentModel.addOptional( self.new_df )
+        OptionalWidgetModel().addOptional( self.new_df )
         return
