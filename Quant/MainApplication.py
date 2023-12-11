@@ -16,7 +16,7 @@ pd.set_option('display.max_rows',None)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    app.setWindowIcon(QIcon("./icons/stock.svg"))
+    app.setWindowIcon(QIcon("icons/owl.svg"))
     myWin = MainWindow()
     myWin.show()
     sys.exit(app.exec_())

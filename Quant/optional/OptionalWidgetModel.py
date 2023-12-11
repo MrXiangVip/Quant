@@ -16,7 +16,7 @@ class OptionalWidgetModel( DataManager ):
             self.optional = pd.read_sql(sql, self.engine)
         except Exception as e:
             # 如果表不存在, 则创建空表 并写回数据库
-            logger.debug("error ", e)
+            logger.debug(("error ", e))
             self.optional = pd.DataFrame( data=None, columns=settings.optional_columns)
             self.optional.to_sql( 'optional', self.engine, index=False)
 
@@ -27,7 +27,7 @@ class OptionalWidgetModel( DataManager ):
         try:
             new_optional.to_sql( 'optional', self.engine, index=False, if_exists='append')
         except Exception as e:
-            logger.debug("error ", e)
+            logger.debug(("error ", e))
         return
 
     def updateOptional(self, new_optional):
@@ -35,5 +35,5 @@ class OptionalWidgetModel( DataManager ):
         try:
             new_optional.to_sql( 'optional', self.engine, index=False, if_exists='replace')
         except Exception as e:
-            logger.debug("error ", e)
+            logger.debug(("error ", e))
         return

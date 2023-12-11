@@ -9,6 +9,7 @@ from optional.OptionalWidgetModel import OptionalWidgetModel
 from optional.OptionalWidgetView import Optional_Ui_Form
 import pandas as pd
 
+import datetime
 import tushare as ts
 from settings import logger
 
@@ -18,7 +19,7 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
         self.root = root
         self.setupUi(self)
         self.initWidget()
-
+        self.initialize =False
     def initWidget(self):
         # primary 列中的数据读取为str
         self.data =  OptionalWidgetModel().getOptional()
@@ -50,6 +51,26 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
                     lineEdit.editingFinished.connect(self.itemEdit)
                     self.tableWidget.setCellWidget(row, col, lineEdit)
         self.createTickTimer()
+
+    def createTickTimer(self):
+        logger.debug("create tick timer")
+        # self.timer = threading.Timer( settings.time_tick, self.updateTableWidget)
+        # self.timer.start()
+        self.timer = QTimer(self)
+        self.timer.timeout.connect( self.updateTickTimer )
+        self.timer.start( settings.time_tick)
+
+    def updateTickTimer(self):
+        if self.initialize is False:
+            self.updateTableWidget()
+            self.initialize=True
+        else:
+            currentHour = datetime.datetime.now().hour
+            if currentHour < 9 or currentHour > 15:
+                logger("实时行情不在有效时间内")
+                return;
+            self.updateTableWidget()
+
     def updateTableWidget(self):
         logger.debug("update optional table widget")
         self.data = OptionalWidgetModel().getOptional()
@@ -125,13 +146,8 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
 
         # self.createTickTimer()
 
-    def createTickTimer(self):
-        logger.debug("create tick timer")
-        # self.timer = threading.Timer( settings.time_tick, self.updateTableWidget)
-        # self.timer.start()
-        self.timer = QTimer(self)
-        self.timer.timeout.connect( self.updateTableWidget )
-        self.timer.start(settings.time_tick)
+
+
     def itemEdit(self):
         curRow = self.tableWidget.currentRow()
         curCol = self.tableWidget.currentColumn()

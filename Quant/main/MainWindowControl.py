@@ -3,13 +3,12 @@ from datetime import datetime
 from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMainWindow, QCompleter, QLCDNumber
 from PyQt5 import QtCore
-import logging
 
 import settings
-from industry.IndustryWidgetControl import IndustryFormWidget
-from main.MainWindowModel import MainWindowModel
 
 from main.MainWindowView import Ui_MainWindow
+from main.MainWindowModel import MainWindowModel
+from industry.IndustryWidgetControl import IndustryFormWidget
 from broker.BrokerWidgetControl import BrokerWidget
 from news.NewsWidgetControl import NewsWidget
 from optional.OptionalWidgetControl import OptionalFormWidget
@@ -63,10 +62,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tab_4.setObjectName("tab_4")
         self.tabWidget.addTab(self.tab_4, "")
 
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "optional"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "industry"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("MainWindow", "environment"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("MainWindow", "Broker"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "自选"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "行业"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("MainWindow", "新闻"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("MainWindow", "券商"))
         self.tabWidget.setCurrentIndex(0)
 
         self.stock_basic =  MainWindowModel().stock_basic
@@ -83,7 +82,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.updateRecordSignal.connect( self.updateRecordForm )
         self.createTickTimer()
     def updateMainWindow(self):
-        logger.debug("更新窗口")
+        logger.debug("更新指数")
         self.lcdNumber.display(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         self.sz_data= ts.get_realtime_quotes('sh')
         # self.label.setText('SZ: ' +self.sz_data.loc[0].price  )
