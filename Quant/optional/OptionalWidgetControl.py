@@ -67,7 +67,7 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
         else:
             currentHour = datetime.datetime.now().hour
             if currentHour < 9 or currentHour > 15:
-                logger("实时行情不在有效时间内")
+                logger.debug("实时行情不在有效时间内")
                 return;
             self.updateTableWidget()
 

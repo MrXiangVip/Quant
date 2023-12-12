@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QMainWindow, QCompleter, QLCDNumber
 from PyQt5 import QtCore
 
 import settings
+from macro.MacroWidgetControl import MacroFormWidget
 
 from main.MainWindowView import Ui_MainWindow
 from main.MainWindowModel import MainWindowModel
@@ -61,11 +62,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tab_4 = BrokerWidget(self)
         self.tab_4.setObjectName("tab_4")
         self.tabWidget.addTab(self.tab_4, "")
+        # 宏观
+        self.tab_5 = MacroFormWidget(self)
+        self.tab_5.setObjectName("tab_5")
+        self.tabWidget.addTab(self.tab_5,"")
 
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "自选"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "行业"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("MainWindow", "新闻"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("MainWindow", "券商"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _translate("MainWindow", "宏观"))
         self.tabWidget.setCurrentIndex(0)
 
         self.stock_basic =  MainWindowModel().stock_basic
@@ -115,11 +121,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def updateRecordForm(self, df):
         logger.debug("更新record 表单")
         self.tab_2.updateRecordForm(df)
+
     def closeEvent(self,event):
         logger.debug("窗体关闭")
 
     def showStockDialog(self):
-
         logger.debug("show stock dialog",self.lineEdit.text())
         self.ts_code=None
         self.index_code=None
