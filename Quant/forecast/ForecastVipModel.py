@@ -1,10 +1,13 @@
 #
 #
 #
-from db.DataManager import DataManager
+from db import DataManager
 
 
-class ForecastVipModel(DataManager):
+class ForecastVipModel( ):
+    def __init__(self):
+        self.dm = DataManager()
+        self.pro = self.dm.pro
 
     def get_forecast_vip(self):
         df = self.pro.forecast_vip()

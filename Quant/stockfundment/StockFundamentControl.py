@@ -9,7 +9,7 @@ import pandas as pd
 import settings
 from settings import logger
 from PandasModel import PandasModel
-from db.DataManager import DataManager
+from db import DataManager
 from optional.OptionalWidgetModel import OptionalWidgetModel
 from stockfundment.StockFundamentDialog import StockFundament_Dialog
 from stockfundment.StockFundamentModel import StockFundamentModel
@@ -26,8 +26,8 @@ class StockFundamentControl(QDialog,StockFundament_Dialog):
         self.ts_code = ts_code
         self.index_code = index_code
         self.name = name
-        self.stock_basic = DataManager.stock_basic
-        self.index_basic = DataManager.index_basic
+        self.stock_basic = DataManager().stock_basic
+        self.index_basic = DataManager().index_basic
         if self.ts_code!=None :
             self.name = self.stock_basic.loc[ self.stock_basic.ts_code == self.ts_code].name
             self.label.setText( ts_code+" "+str(self.name.values) )

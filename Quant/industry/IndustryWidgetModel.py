@@ -1,10 +1,10 @@
 #
-from db.DataManager import DataManager
+from db import DataManager
 
 import akshare as ak
 from settings import logger
 
-class IndustryWidgetModel(DataManager):
+class IndustryWidgetModel( ):
 
     def get_ths_index(self):
         logger.debug("get ths index ")

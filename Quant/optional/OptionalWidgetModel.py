@@ -2,12 +2,15 @@
 #add 20231120
 import  pandas as pd
 import settings
-from db.DataManager import DataManager
+from db import DataManager
 from settings import logger
 
 
-class OptionalWidgetModel( DataManager ):
+class OptionalWidgetModel( ):
 
+    def __init__(self):
+        self.dm = DataManager()
+        self.engine = self.dm.engine
     # 获取自选表数据
     def getOptional(self):
         logger.debug("getOptional")

@@ -14,6 +14,7 @@ import tushare as ts
 from settings import logger
 
 class OptionalFormWidget(QWidget, Optional_Ui_Form):
+
     def __init__(self, root):
         super(OptionalFormWidget, self).__init__(root)
         self.root = root

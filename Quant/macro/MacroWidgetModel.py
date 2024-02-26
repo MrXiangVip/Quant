@@ -5,13 +5,13 @@ from PyQt5.QtCore import QUrl, QFileInfo
 from pyecharts import options as opts
 import sys, json
 
-from db.DataManager import DataManager
+from db import DataManager
 
 world_data = None
 with open('./data/ne_110m_admin_0_countries.json', 'r', encoding='utf-8') as fr:
     world_data = json.load(fr)
 
-class MacroWidgetModel(DataManager):
+class MacroWidgetModel( ):
 
     def create_world_chart(self):
         world_geo = (Geo().add_js_funcs("echarts.registerMap('world00',{});".format(world_data))

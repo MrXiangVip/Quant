@@ -1,13 +1,13 @@
 #
 # 20231120
 #
-from db.DataManager import DataManager
+from db import DataManager
 
 import datetime
 import pandas as pd
 from settings import logger
 
-class NewsWidgetModel(DataManager):
+class NewsWidgetModel():
 
     # 获取新闻数据
     def getNews(self, start_date, end_date=0):

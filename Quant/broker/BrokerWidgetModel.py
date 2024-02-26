@@ -3,11 +3,14 @@
 #
 
 import pandas as pd
-from db.DataManager import DataManager
+from db import DataManager
 from settings import logger
 
 
-class BrokerWidgetModel(DataManager):
+class BrokerWidgetModel():
+    def __init__(self):
+        self.dm = DataManager()
+        self.pro = self.dm.pro
     #
     def getBrokerReportData(self, report_date=0, ts_code=0):
         logger.debug(("卖方盈利预测数据 ",  report_date ))

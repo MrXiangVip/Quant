@@ -24,7 +24,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
-
         self.initWindow()
 
     def initWindow(self):
@@ -79,7 +78,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.index_basic = MainWindowModel().index_basic
         logger.debug(("index basic shape", self.index_basic.shape ))
 
-        self.completer = QCompleter( MainWindowModel().abbrevationList )
+        self.completer = QCompleter( MainWindowModel().getAbbrevationList() )
         self.completer.setFilterMode(QtCore.Qt.MatchContains)
         self.completer.setCompletionMode(QCompleter.PopupCompletion)
         self.lineEdit.setCompleter( self.completer)

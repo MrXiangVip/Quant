@@ -1,9 +1,9 @@
-from db.DataManager import DataManager
+from db import DataManager
 
 import akshare as ak
 from settings import logger
 
-class StockFundamentModel(DataManager):
+class StockFundamentModel():
     # 主营
     def get_stock_zygc(self, ts_code):
         logger.debug( "get stock zygc", ts_code)
