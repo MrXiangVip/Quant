@@ -16,13 +16,14 @@ from settings import logger
 
 
 class MainWindowModel():
-    logger.info("创建缩写列")
+
     def __init__(self):
         self.dm = DataManager()
         self.stock_basic =self.dm.stock_basic
         self.index_basic =self.dm.index_basic
 
     def getAbbrevationList(self):
+        logger.debug("创建缩写词")
         self.abbrevationStockList = list( self.dm.stock_basic['name'].apply(DataManager.getAbbrevation) )
         self.abbrevationIndexList = list( self.dm.index_basic['name'].apply(DataManager.getAbbrevation) )
         # DataManager().stock_basic['abbrevation'] = DataManager().stock_basic['name'].apply(DataManager.getAbbrevation)

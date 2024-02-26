@@ -10,6 +10,7 @@ class IndustryFormWidget(QWidget, Industry_Ui_Form):
     def __init__(self, root):
         super(IndustryFormWidget, self).__init__(root)
         self.root = root
+        self.model = IndustryWidgetModel()
         self.setupUi(self)
         # self.initWindow()
 
@@ -20,7 +21,7 @@ class IndustryFormWidget(QWidget, Industry_Ui_Form):
         logger.debug("update window")
         # self.data = DataManager().getBrokerReport( date )
         # self.data = DataManager().getBrokerReportData( date )
-        self.data = IndustryWidgetModel().get_ths_index()
+        self.data = self.model.get_ths_index()
         self.data = self.data.loc[self.data.exchange == 'A'].reset_index()  # .drop(columns='index')
         self.table_rows = self.data.shape[0]
         table_columns = self.data.shape[1]
@@ -50,9 +51,9 @@ class IndustryFormWidget(QWidget, Industry_Ui_Form):
         ts_code = tree_widget_item.text(1)
         logger.debug(ts_code)
         # child_data = DataManager().get_ths_member(ts_code)
-        child_data = IndustryWidgetModel().get_real_ths_member(ts_code)
+        child_data = self.model.get_real_ths_member(ts_code)
         if child_data.empty or child_data.shape[0]==1:
-            child_data = IndustryWidgetModel().get_ths_member(ts_code)
+            child_data = self.model.get_ths_member(ts_code)
         logger.debug("child data \n", child_data)
         child_rows = child_data.shape[0]
         tree_widget_item.takeChildren()

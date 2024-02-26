@@ -10,9 +10,12 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+from settings import logger
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
+        logger.debug("创建主窗口")
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)

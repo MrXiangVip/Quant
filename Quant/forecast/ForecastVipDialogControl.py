@@ -13,6 +13,7 @@ class ForecastVipDialogControl(QDialog,ForecastVip_Ui_Dialog):
     def __init__(self ):
         super(ForecastVipDialogControl,self).__init__()
         # self.root = root
+        self.model = ForecastVipModel();
         self.setupUi(self)
 
         # self.label.setText( "forecast " )
@@ -24,7 +25,7 @@ class ForecastVipDialogControl(QDialog,ForecastVip_Ui_Dialog):
 
     def update_dialog(self):
         logger.debug("update dialog")
-        self.data = ForecastVipModel().get_forecast_vip()
+        self.data = self.model.get_forecast_vip()
         self.table_rows = self.data.shape[0]
         table_columns = self.data.shape[1]
         input_table_header = self.data.columns.values.tolist()

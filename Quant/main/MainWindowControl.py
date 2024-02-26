@@ -23,6 +23,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
+        self.model = MainWindowModel()
         self.setupUi(self)
         self.initWindow()
 
@@ -73,12 +74,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _translate("MainWindow", "宏观"))
         self.tabWidget.setCurrentIndex(0)
 
-        self.stock_basic =  MainWindowModel().stock_basic
+        self.stock_basic =  self.model.stock_basic
         logger.debug(("stock basic shape ", self.stock_basic.shape ))
-        self.index_basic = MainWindowModel().index_basic
+        self.index_basic = self.model.index_basic
         logger.debug(("index basic shape", self.index_basic.shape ))
 
-        self.completer = QCompleter( MainWindowModel().getAbbrevationList() )
+        self.completer = QCompleter( self.model.getAbbrevationList() )
         self.completer.setFilterMode(QtCore.Qt.MatchContains)
         self.completer.setCompletionMode(QCompleter.PopupCompletion)
         self.lineEdit.setCompleter( self.completer)

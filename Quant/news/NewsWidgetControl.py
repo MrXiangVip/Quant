@@ -17,6 +17,7 @@ class NewsWidget(QWidget, News_Ui_Form):
     def __init__(self, root):
         super(NewsWidget, self).__init__(root)
         self.root = root
+        self.model =NewsWidgetModel()
         self.setupUi(self)
         # self.initWindow()
 
@@ -24,7 +25,7 @@ class NewsWidget(QWidget, News_Ui_Form):
         today = datetime.datetime.today()
         self.last_timestamp = datetime.datetime.now().replace(microsecond=0)
         # primary 列中的数据读取为str
-        self.news_df =  NewsWidgetModel().getNews(today)
+        self.news_df =  self.model.getNews(today)
         self.news_df.drop(columns='title', inplace=True)
         logger.debug("news_df ", self.news_df.shape)
         self.table_rows = self.news_df.shape[0]
@@ -76,7 +77,7 @@ class NewsWidget(QWidget, News_Ui_Form):
         logger.debug("update news table widget")
         now = datetime.datetime.now().replace(microsecond=0)
 
-        self.update_data = NewsWidgetModel().getNews( self.last_timestamp, now)
+        self.update_data = self.model.getNews( self.last_timestamp, now)
         self.update_data.drop(columns='title', inplace=True)
         logger.debug("update data ", self.update_data.shape)
         if self.update_data.shape[0] :

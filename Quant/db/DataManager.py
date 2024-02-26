@@ -26,7 +26,6 @@ print(DataFile)
 
 class DataManager(metaclass=SingleMetaBase):
 
-
     def __init__(self):
         logger.debug("init datamanager")
         self.engine = sqlalchemy.create_engine(prefix + DataFile)
@@ -59,38 +58,6 @@ class DataManager(metaclass=SingleMetaBase):
         wordAbbrevation += word
         return wordAbbrevation
     #
-    # def getStockBasic(self):
-    #     logger.debug("getStockBasic")
-    #     # 先从数据库中查表， 如果表不存在则从tushare 获取并replace到数据库
-    #     try:
-    #         sql ='''select * from stock_constant'''
-    #         stock_basic = pd.read_sql_query(sql,self.engine)
-    #         logger.debug("sql ", sql)
-    #     except Exception as e:
-    #         logger.debug("error ", e)
-    #         stock_basic = self.pro.stock_basic()
-    #         stock_basic['abbrevation']=stock_basic['name'].apply( self.getAbbrevation )
-    #         stock_basic.to_sql('stock_constant',self.engine, if_exists="replace")
-    #         logger.debug("get from tushare.stock_basic ")
-    #     return  stock_basic
-    #
-
-    # def getIndexBasic(self):
-    #     logger.debug("getIndexBasic")
-    #     try:
-    #         sql ='''select * from index_constant'''
-    #         self.index_basic = pd.read_sql_query(sql, self.engine)
-    #         logger.debug("sql ", sql)
-    #     except Exception as e:
-    #         logger.debug("error ", e)
-    #         self.index_basic = self.pro.index_basic()
-    #         self.index_basic['abbrevation'] = self.index_basic['name'].apply( self.getAbbrevation )
-    #         self.index_basic.to_sql('index_constant',self.engine, if_exists="replace")
-    #         logger.debug("get from tushare.index_basic ")
-    #     return  self.index_basic
-
-
-    #
     def getFocus(self, content):
         words = jieba.lcut(content)  # 默认是精确模式
         logger.debug("分词后 ", words)
@@ -106,8 +73,7 @@ class DataManager(metaclass=SingleMetaBase):
         df = self.pro.disclosure_date(end_date='20220630')
         return  df
 
-# 单例模式
-# DataManagerInstance =DataManager()
+
 
 if __name__ == '__main__':
     dataManager = DataManager()

@@ -8,7 +8,8 @@ import pandas as pd
 from settings import logger
 
 class NewsWidgetModel():
-
+    def __init__(self):
+        self.pro = DataManager().pro
     # 获取新闻数据
     def getNews(self, start_date, end_date=0):
         logger.debug(("get news","start date ->", start_date, "end date ->", end_date ))

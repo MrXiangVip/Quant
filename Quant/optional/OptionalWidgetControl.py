@@ -18,12 +18,13 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
     def __init__(self, root):
         super(OptionalFormWidget, self).__init__(root)
         self.root = root
+        self.model =OptionalWidgetModel()
         self.setupUi(self)
         self.initWidget()
         self.initialize =False
     def initWidget(self):
         # primary 列中的数据读取为str
-        self.data =  OptionalWidgetModel().getOptional()
+        self.data =  self.model.getOptional()
 
         table_rows = self.data.shape[0]
         table_columns = self.data.shape[1]
@@ -74,7 +75,7 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
 
     def updateTableWidget(self):
         logger.debug("update optional table widget")
-        self.data = OptionalWidgetModel().getOptional()
+        self.data = self.model.getOptional()
         self.primaylist = self.data['primary'].tolist()
         logger.debug(self.primaylist)
         if len(self.primaylist)==0:
@@ -157,7 +158,7 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
         logger.debug(type(cell), str(cell.text()))
         self.data.iloc[curRow, curCol] = str(cell.text())
         logger.debug(self.data)
-        OptionalWidgetModel().updateOptional( self.data )
+        self.model.updateOptional( self.data )
 
     def createRightMenu(self,position):
         # 菜单对象
@@ -197,7 +198,7 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
             forwardData = self.data.iloc[curRow - 1].copy()
             self.data.iloc[curRow - 1] = curData
             self.data.iloc[curRow] = forwardData
-            OptionalWidgetModel().updateOptional(self.data)
+            self.model.updateOptional(self.data)
             # self.tableWidget.setCurrentIndex(curRow-1)
             self.tableWidget.rowAt(curRow - 1)
     def swapHead(self):
@@ -212,7 +213,7 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
             headData = self.data.iloc[0].copy()
             self.data.iloc[0] = curData
             self.data.iloc[curRow] = headData
-            OptionalWidgetModel().updateOptional(self.data)
+            self.model.updateOptional(self.data)
             # self.tableWidget.setCurrentIndex(curRow-1)
             self.tableWidget.rowAt(curRow)
 
@@ -222,4 +223,4 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
         logger.debug(row)
         self.tableWidget.removeRow(row)
         self.data.drop(labels=row, inplace=True)
-        OptionalWidgetModel().updateOptional( self.data )
+        self.model.updateOptional( self.data )

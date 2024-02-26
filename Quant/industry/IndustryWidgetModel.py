@@ -6,6 +6,9 @@ from settings import logger
 
 class IndustryWidgetModel( ):
 
+    def __init__(self):
+        self.pro = DataManager()
+
     def get_ths_index(self):
         logger.debug("get ths index ")
         df = self.pro.ths_index(**{

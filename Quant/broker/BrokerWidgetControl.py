@@ -13,6 +13,7 @@ class BrokerWidget(QWidget, Broker_Ui_Form):
     def __init__(self, root):
         super(BrokerWidget, self).__init__(root)
         self.root = root
+        self.model = BrokerWidgetModel();
         self.setupUi(self)
         self.initWindow()
 
@@ -39,7 +40,7 @@ class BrokerWidget(QWidget, Broker_Ui_Form):
         # self.data = DataManager().getBrokerReport( date )
         if isinstance(date, QDate):
             date = date.toPyDate()
-        self.data = BrokerWidgetModel().getBrokerReportData( date )
+        self.data = self.model.getBrokerReportData( date )
         # 删除日期这列
         if self.data.empty :
             return
