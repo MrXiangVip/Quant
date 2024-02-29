@@ -5,7 +5,7 @@ from .broker import BackBroker
 import pandas as pd
 class Cerebro():
     def __init__(self):
-        self.datas = list()
+        self.lines = list()
         self.strats = list()
         self._broker = BackBroker()
         self._broker.cerebro = self
@@ -16,7 +16,7 @@ class Cerebro():
 
     def adddata(self, data, name=None):
         # data.setenvironment(self)
-        self.datas.append(data)
+        self.lines.append(data)
         return  data
 
     def setbroker(self, broker):
@@ -40,7 +40,7 @@ class Cerebro():
 
 
     def run(self, **kwargs):
-        # if not self.datas:
+        # if not self.lines:
         #     return []  # nothing can be run
         self.runstrats = list()
         iterstrats = itertools.product(*self.strats)
@@ -49,21 +49,29 @@ class Cerebro():
             self.runstrats.append( runstrat )
         return  self.runstrats
 
-    def _runonce(self, runstrats):
+    def _runonce(self, runstrat):
         print("runonce")
-        for  d in self.datas:
-            print( d.columns )
-            for dt0 in d.iterrows():
-                for strat in runstrats:
-                    strat._oncepost(dt0)
+        if not self.lines:
+            return []
+        lines = self.lines
+        while True:
+            # 取出 下一个元素
+            dts = [line.advance_peek() for line in lines]
+            if any( item  is None for item in dts):
+                print("end of lines")
+                break;
+            # 将整个数据线推进到下一个
+            # for i, dti in enumerate(self.lines):
+            #     lines[i].advance()
+            runstrat._oncepost(dts)
 
 
 
     def runstrategies(self, iterstrat, predata=False):
-        self.runningstrats = runstrats = list()
+        runstrats = list()
         for stratcls, sargs , skwargs in iterstrat:
             try:
-                strat = stratcls( )
+                strat = stratcls( self.lines )
             except Exception as e:
                 print( e )
                 continue
@@ -73,7 +81,7 @@ class Cerebro():
             for idx, strat in enumerate(runstrats):
                 strat._start()
 
-            self._runonce( runstrats )
+            self._runonce( strat )
 
             for strat in runstrats:
                 strat._stop()
