@@ -32,3 +32,12 @@ class Strategy():
     def advance(self):
         for i , line in enumerate(self.lines):
             line.advance()
+
+
+    def buy(self, dt):
+        print("buy start")
+        print(dt)
+        print("buy end")
+
+    def sell(self, dt ):
+        print("sell", dt)
