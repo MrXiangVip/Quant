@@ -2,6 +2,7 @@
 class Strategy():
     def __init__(self, lines):
         self.lines=lines
+        self.total=10000
         # print(id(self.lines), id(lines))
 
     def _start(self):
@@ -36,8 +37,12 @@ class Strategy():
 
     def buy(self, dt):
         print("buy start")
-        print(dt)
+        self.total -= dt.low
+        print( self.total )
         print("buy end")
 
     def sell(self, dt ):
-        print("sell", dt)
+        print("sell start")
+        self.total += dt.close
+        print( self.total )
+        print("sell end")

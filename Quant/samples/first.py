@@ -10,12 +10,19 @@ import tushare as ts
 
 class MyStrategy(bt.Strategy ):
 
+    # position =False
     def next(self):
         # print( self.lines[0][0], self.lines[1][0])
         series0=self.lines[0][0]
         series1=self.lines[1][0]
+
         if ((series0.high - series0.open)/series0.open > 0.01) and ((series1.open - series1.low) / series1.open > 0.01) :
             self.buy(series1)
+            self.position=True
+
+        if self.buy:
+            self.sell(series1)
+            self.position =False
 
 if __name__ == '__main__':
 
