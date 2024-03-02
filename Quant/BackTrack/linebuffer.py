@@ -45,5 +45,5 @@ class LineBuffer():
     def advance_peek(self):
         if self.idx < len(self.data):
             # print("peek", self.data.loc[self.idx])
-            return  self.data.loc[self.idx]
+            return  self.data.iloc[self.idx]
         return  None
