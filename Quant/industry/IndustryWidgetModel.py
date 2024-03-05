@@ -1,7 +1,7 @@
 #
 from db import DataManager
 
-import akshare as ak
+# import akshare as ak
 from settings import logger
 
 class IndustryWidgetModel( ):

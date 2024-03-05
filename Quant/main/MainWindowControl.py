@@ -68,18 +68,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tabWidget.addTab(self.tab_5,"")
 
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "自选"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "行业"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "财报"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("MainWindow", "新闻"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("MainWindow", "券商"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("MainWindow", "策略"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _translate("MainWindow", "宏观"))
         self.tabWidget.setCurrentIndex(0)
 
         self.stock_basic =  self.model.stock_basic
         logger.debug(("stock basic shape ", self.stock_basic.shape ))
-        self.index_basic = self.model.index_basic
-        logger.debug(("index basic shape", self.index_basic.shape ))
+        self.fund_basic = self.model.fund_basic
+        logger.debug(("index basic shape", self.fund_basic.shape ))
 
-        self.completer = QCompleter( self.model.getAbbrevationList() )
+        self.completer = QCompleter( self.model.abbrevationList )
         self.completer.setFilterMode(QtCore.Qt.MatchContains)
         self.completer.setCompletionMode(QCompleter.PopupCompletion)
         self.lineEdit.setCompleter( self.completer)
@@ -128,18 +128,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def showStockDialog(self):
         logger.debug("show stock dialog",self.lineEdit.text())
         self.ts_code=None
-        self.index_code=None
+        self.fund_code=None
         ts_codes = self.stock_basic.loc[self.stock_basic['abbrevation']== self.lineEdit.text()].ts_code
-        self.ts_code = ts_codes.iloc[0]
+        if not ts_codes.empty:
+            self.ts_code = ts_codes.iloc[0]
 
-        if self.ts_code ==None:
-            index_codes = self.index_basic.loc[self.index_basic['abbrevation']== self.lineEdit.text()].ts_code
-            self.index_code = index_codes.iloc[0]
-        if self.ts_code ==None and self.index_code ==None:
+        elif self.ts_code ==None:
+            fund_codes = self.fund_basic.loc[self.fund_basic['abbrevation']== self.lineEdit.text()].ts_code
+            self.fund_code = fund_codes.iloc[0]
+        elif self.ts_code ==None and self.fund_code ==None:
             logger.debug(" empty name ")
             return
         # self.name_row = self.name_row.reset_index()
-        self.stockDailog = StockFundamentControl( ts_code=self.ts_code, index_code=self.index_code )
+        self.stockDailog = StockFundamentControl( ts_code=self.ts_code, fund_code=self.fund_code )
         # self.addDialog.addStockSignal.connect(self.addStock)
         self.lineEdit.setText("")
         self.stockDailog.show()

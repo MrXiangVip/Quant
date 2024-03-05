@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import sqlalchemy
 import tushare as ts
-import akshare as ak
+# import akshare as ak
 import xpinyin
 from xpinyin import Pinyin
 import  jieba
@@ -29,25 +29,27 @@ class DataManager(metaclass=SingleMetaBase):
     def __init__(self):
         logger.debug("init datamanager")
         self.engine = sqlalchemy.create_engine(prefix + DataFile)
-        self.pro = ts.pro_api('ac147953b15f6ee963c164fc8ee8ef5228e58b75e5953ba5997ef117')
+        self.pro = ts.pro_api('5bf581802c21c8792cf2cf75d44e989d8fa484595252fe8be3399f88')
         jieba.load_userdict('./company.csv')
         # stock_basic 每小时最多访问该接口一次, 先从网络获取列表信息, 如果网络上没有 从本地数据查找, 最后 再将列表保存到数据库中
         self.stock_basic = pd.DataFrame()
-        self.index_basic = pd.DataFrame()
+        self.fund_basic = pd.DataFrame()
         try:
             self.stock_basic = self.pro.stock_basic()
-            self.index_basic = self.pro.index_basic()
-            self.focus_words = self.stock_basic.name.tolist()
+            # 场内基金
+            self.fund_basic = self.pro.fund_basic(market='E')
             self.stock_basic.to_sql('stock_constant', self.engine, if_exists="replace")
-            self.index_basic.to_sql('index_constant', self.engine, if_exists="replace")
+            self.fund_basic.to_sql('fund_constant', self.engine, if_exists="replace")
+            # 焦点词
+            self.focus_words = self.stock_basic.name.tolist()
         except Exception as e:
             sql = '''select * from stock_constant'''
             self.stock_basic = pd.read_sql_query(sql, self.engine)
-            sql = '''select * from index_constant'''
-            self.index_basic = pd.read_sql_query(sql, self.engine)
+            sql = '''select * from fund_constant'''
+            self.fund_basic = pd.read_sql_query(sql, self.engine)
         finally:
             logger.debug(("初始化 stock_basic ", self.stock_basic.shape, self.stock_basic.columns))
-            logger.debug(("初始化 index_basic ", self.index_basic.shape, self.index_basic.columns))
+            logger.debug(("初始化 fund_basic ", self.fund_basic.shape, self.fund_basic.columns))
     # 将名称转成拼音
     def getAbbrevation( word):
         word = word.replace('-','')

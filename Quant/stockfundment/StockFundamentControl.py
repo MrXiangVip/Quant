@@ -17,24 +17,25 @@ from stockfundment.StockFundamentModel import StockFundamentModel
 
 class StockFundamentControl(QDialog,StockFundament_Dialog):
 
-    def __init__(self, ts_code=None, index_code=None, name=None):
+    def __init__(self, ts_code=None, fund_code=None, name=None):
         super(StockFundamentControl,self).__init__()
         # self.root = root
+        self.model =StockFundamentModel()
         self.setupUi(self)
-        logger.debug( ts_code, index_code, name )
+        logger.debug( ts_code, fund_code, name )
 
         self.ts_code = ts_code
-        self.index_code = index_code
+        self.fund_code = fund_code
         self.name = name
         self.stock_basic = DataManager().stock_basic
-        self.index_basic = DataManager().index_basic
+        self.fund_basic = DataManager().fund_basic
         if self.ts_code!=None :
             self.name = self.stock_basic.loc[ self.stock_basic.ts_code == self.ts_code].name
             self.label.setText( ts_code+" "+str(self.name.values) )
 
-        if self.index_code !=None:
-            self.name = self.index_basic.loc[ self.index_basic.ts_code == self.index_code].name
-            self.label.setText( self.index_code +" "+str(self.name.values) )
+        if self.fund_code !=None:
+            self.name = self.fund_basic.loc[ self.fund_basic.ts_code == self.fund_code].name
+            self.label.setText( self.fund_code +" "+str(self.name.values) )
 
         #xshx add
         self.pushButton.setText( "加自选")
@@ -50,7 +51,7 @@ class StockFundamentControl(QDialog,StockFundament_Dialog):
         #
         self.verticalLayout = QtWidgets.QVBoxLayout(self.tab)
         self.tableview = QtWidgets.QTableView(self.tab)
-        data = StockFundamentModel().get_stock_zygc( ts_code= self.ts_code )
+        data = self.model.get_stock_fund_data( ts_code= self.ts_code, fund_code=self.fund_code )
         logger.debug( data )
         myModel = PandasModel(data)
         self.tableview.setModel(myModel)
@@ -65,12 +66,12 @@ class StockFundamentControl(QDialog,StockFundament_Dialog):
             self.new_df['primary']= self.stock_basic.loc[ self.stock_basic.ts_code == self.ts_code].symbol
             self.new_df['code']= self.ts_code
 
-        if self.index_code!=None:
+        if self.fund_code!=None:
             self.new_df['name'] = self.name
-            self.new_df['primary']= settings.stock_dic.get(self.name)
-            self.new_df['code']= self.index_code
+            self.new_df['primary']= self.fund_basic.loc[self.fund_basic.ts_code==self.fund_code].ts_code
+            self.new_df['code']= self.fund_code
             logger.debug('name',  self.new_df['name'])
         # self.new_df.fillna( value=None)
-        logger.debug( "new_df \n", self.new_df)
+        logger.log( "new_df \n", self.new_df)
         OptionalWidgetModel().addOptional( self.new_df )
         return
