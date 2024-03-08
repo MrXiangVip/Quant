@@ -2,11 +2,10 @@
 # xshx add 20231212
 from PyQt5.QtWidgets import QWidget
 
-from macro.MacroWidgetModel import MacroWidgetModel
-from macro.MacroWidgetView import Macro_Ui_Form
 from settings import logger
 
-
+from .MacroWidgetView import *
+from .MacroWidgetModel import *
 
 class MacroFormWidget(QWidget, Macro_Ui_Form):
     def __init__(self, root):

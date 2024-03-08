@@ -22,6 +22,7 @@ class MainWindowModel():
         self.stock_basic =self.dm.stock_basic
         self.fund_basic =self.dm.fund_basic
         self.getAbbrevationList()
+        logger.info("data ready")
     def getAbbrevationList(self):
         logger.debug("创建缩写词")
         # self.abbrevationStockList = list( self.dm.stock_basic['name'].apply(DataManager.getAbbrevation) )

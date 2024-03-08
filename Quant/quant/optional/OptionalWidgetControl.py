@@ -77,7 +77,7 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
         logger.debug("update optional table widget")
         self.data = self.model.getOptional()
         self.primaylist = self.data['primary'].tolist()
-        logger.debug(self.primaylist)
+        logger.info(self.primaylist)
         if len(self.primaylist)==0:
             logger.debug(" primary empty ")
         try:

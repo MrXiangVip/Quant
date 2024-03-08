@@ -1,10 +1,10 @@
 from PyQt5.QtWidgets import QWidget, QAbstractItemView, QTreeWidgetItem
 
-from industry.IndustryWidgetModel import IndustryWidgetModel
-from industry.IndustryWidgetView import Industry_Ui_Form
 from settings import ths_member_columns
 from settings import logger
 
+from .IndustryWidgetView import *
+from .IndustryWidgetModel import *
 
 class IndustryFormWidget(QWidget, Industry_Ui_Form):
     def __init__(self, root):

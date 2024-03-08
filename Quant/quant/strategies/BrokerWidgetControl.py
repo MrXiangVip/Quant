@@ -1,11 +1,12 @@
 from PyQt5.QtCore import QDate, Qt
 from PyQt5.QtWidgets import QWidget, QAbstractItemView, QHeaderView, QTableWidgetItem
 
-from broker.BrokerWidgetModel import BrokerWidgetModel
-from broker.BrokerWidgetView import Broker_Ui_Form
 import datetime
+
 from settings import logger
 
+from .BrokerWidgetView import *
+from .BrokerWidgetModel import *
 from forecast.ForecastVipDialogControl import ForecastVipDialogControl
 
 

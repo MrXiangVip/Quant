@@ -5,18 +5,20 @@ from PyQt5.QtWidgets import QMainWindow, QCompleter, QLCDNumber
 from PyQt5 import QtCore
 
 import settings
-from macro.MacroWidgetControl import MacroFormWidget
 
-from main.MainWindowView import Ui_MainWindow
-from main.MainWindowModel import MainWindowModel
-from industry.IndustryWidgetControl import IndustryFormWidget
-from broker.BrokerWidgetControl import BrokerWidget
-from news.NewsWidgetControl import NewsWidget
-from optional.OptionalWidgetControl import OptionalFormWidget
-from stockfundment.StockFundamentControl import StockFundamentControl
 import tushare as ts
 from decimal import  *
+
+from .MainWindowView import Ui_MainWindow
+from .MainWindowModel import MainWindowModel
 from settings import logger
+from ..financial import IndustryFormWidget
+from ..macro.MacroWidgetControl import MacroFormWidget
+from ..news.NewsWidgetControl import NewsWidget
+from ..optional import OptionalFormWidget
+from ..stockfundment import StockFundamentControl
+from ..strategies import BrokerWidget
+
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     # updateRecordSignal = pyqtSignal( object )
@@ -42,22 +44,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.hs_data= ts.get_realtime_quotes('hs300')
         self.label_2.setText('HS: ' +self.hs_data.loc[0].price  )
-
+        # 自选
         # self.tab = QtWidgets.QWidget()
         self.tab = OptionalFormWidget(self)
         self.tab.setObjectName("tab")
         self.tabWidget.addTab(self.tab, "")
-
+        # 财报
         # self.tab_2 = QtWidgets.QWidget()
         self.tab_2 = IndustryFormWidget(self)
         self.tab_2.setObjectName("tab_2")
         self.tabWidget.addTab(self.tab_2, "")
-
+        # 新闻
         # self.tab_3 = QtWidgets.QWidget()
         self.tab_3 = NewsWidget(self)
         self.tab_3.setObjectName("tab_3")
         self.tabWidget.addTab(self.tab_3, "")
-
+        # 策略
         # self.tab_4 = QtWidgets.QWidget()
         self.tab_4 = BrokerWidget(self)
         self.tab_4.setObjectName("tab_4")
@@ -126,7 +128,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         logger.debug("窗体关闭")
 
     def showStockDialog(self):
-        logger.debug("show stock dialog",self.lineEdit.text())
+        logger.info("show stock dialog",self.lineEdit.text())
         self.ts_code=None
         self.fund_code=None
         ts_codes = self.stock_basic.loc[self.stock_basic['abbrevation']== self.lineEdit.text()].ts_code

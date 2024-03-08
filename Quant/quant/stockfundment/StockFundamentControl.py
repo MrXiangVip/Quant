@@ -8,7 +8,6 @@ import pandas as pd
 
 import settings
 from settings import logger
-from PandasModel import PandasModel
 from db import DataManager
 from optional.OptionalWidgetModel import OptionalWidgetModel
 from stockfundment.StockFundamentDialog import StockFundament_Dialog
@@ -30,12 +29,12 @@ class StockFundamentControl(QDialog,StockFundament_Dialog):
         self.stock_basic = DataManager().stock_basic
         self.fund_basic = DataManager().fund_basic
         if self.ts_code!=None :
-            self.name = self.stock_basic.loc[ self.stock_basic.ts_code == self.ts_code].name
-            self.label.setText( ts_code+" "+str(self.name.values) )
+            self.name = self.stock_basic.loc[ self.stock_basic.ts_code == self.ts_code].name.item()
+            self.label.setText( ts_code+" "+str(self.name) )
 
         if self.fund_code !=None:
-            self.name = self.fund_basic.loc[ self.fund_basic.ts_code == self.fund_code].name
-            self.label.setText( self.fund_code +" "+str(self.name.values) )
+            self.name = self.fund_basic.loc[ self.fund_basic.ts_code == self.fund_code].name.item()
+            self.label.setText( self.fund_code +" "+str(self.name) )
 
         #xshx add
         self.pushButton.setText( "加自选")
@@ -60,18 +59,23 @@ class StockFundamentControl(QDialog,StockFundament_Dialog):
 
     def addOption(self):
         logger.debug( "addOption")
-        self.new_df = pd.DataFrame(data=None, columns=settings.optional_columns)
-        if self.ts_code!=None:
-            self.new_df['name'] = self.name
-            self.new_df['primary']= self.stock_basic.loc[ self.stock_basic.ts_code == self.ts_code].symbol
-            self.new_df['code']= self.ts_code
-
-        if self.fund_code!=None:
-            self.new_df['name'] = self.name
-            self.new_df['primary']= self.fund_basic.loc[self.fund_basic.ts_code==self.fund_code].ts_code
-            self.new_df['code']= self.fund_code
-            logger.debug('name',  self.new_df['name'])
-        # self.new_df.fillna( value=None)
-        logger.log( "new_df \n", self.new_df)
-        OptionalWidgetModel().addOptional( self.new_df )
-        return
+        # self.new_df = pd.DataFrame(data=None, columns=settings.optional_columns)
+        # if self.ts_code!=None:
+        #     self.new_df['name'] = self.name
+        #     self.new_df['primary']= self.stock_basic.loc[ self.stock_basic.ts_code == self.ts_code].symbol
+        #     self.new_df['code']= self.ts_code
+        #
+        # if self.fund_code!=None:
+        #     self.new_df['name'] = self.name
+        #     self.new_df['primary']= self.fund_basic.loc[self.fund_basic.ts_code==self.fund_code].symbol
+        #     self.new_df['code']= self.fund_code
+        # # self.new_df.fillna( value=None)
+        # print( "new_df \n", self.new_df)
+        # OptionalModel().addOptional( self.new_df.head(0) )
+        # return
+        self.newOption = dict.fromkeys( settings.optional_columns, None)
+        self.newOption['primary'] =self.stock_basic.loc[self.stock_basic.ts_code ==self.ts_code].symbol.item()
+        self.newOption['name'] = self.name
+        self.newOption['code'] = self.ts_code
+        print( self.newOption )
+        OptionalModel().addOptional( self.newOption )
