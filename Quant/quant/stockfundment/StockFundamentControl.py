@@ -7,12 +7,14 @@ from PyQt5.QtWidgets import QDialog, QHeaderView
 import pandas as pd
 
 import settings
-from settings import logger
-from db import DataManager
-from optional.OptionalWidgetModel import OptionalWidgetModel
-from stockfundment.StockFundamentDialog import StockFundament_Dialog
-from stockfundment.StockFundamentModel import StockFundamentModel
 
+from ..optional import OptionalWidgetModel
+from ..settings import logger
+from db import DataManager
+
+from .PandasModel import *
+from .StockFundamentModel import  *
+from .StockFundamentDialog import *
 
 class StockFundamentControl(QDialog,StockFundament_Dialog):
 
@@ -21,7 +23,7 @@ class StockFundamentControl(QDialog,StockFundament_Dialog):
         # self.root = root
         self.model =StockFundamentModel()
         self.setupUi(self)
-        logger.debug( ts_code, fund_code, name )
+        logger.debug(( ts_code, fund_code, name ))
 
         self.ts_code = ts_code
         self.fund_code = fund_code
@@ -73,9 +75,17 @@ class StockFundamentControl(QDialog,StockFundament_Dialog):
         # print( "new_df \n", self.new_df)
         # OptionalModel().addOptional( self.new_df.head(0) )
         # return
+
         self.newOption = dict.fromkeys( settings.optional_columns, None)
-        self.newOption['primary'] =self.stock_basic.loc[self.stock_basic.ts_code ==self.ts_code].symbol.item()
-        self.newOption['name'] = self.name
-        self.newOption['code'] = self.ts_code
+        logger.info(( self.ts_code, self.fund_code))
+        if  self.ts_code:
+            self.newOption['name'] = self.name
+            self.newOption['code'] = self.ts_code
+            self.newOption['primary'] = self.ts_code[:6]
+
+        if  self.fund_code:
+            self.newOption['name'] = self.name
+            self.newOption['code'] = self.fund_code
+            self.newOption['primary'] =self.fund_code[:6]
         print( self.newOption )
-        OptionalModel().addOptional( self.newOption )
+        OptionalWidgetModel().addOptional( self.newOption )

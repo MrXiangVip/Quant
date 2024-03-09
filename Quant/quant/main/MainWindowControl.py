@@ -1,21 +1,22 @@
+# xshx add  20240307
 from datetime import datetime
 
 from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMainWindow, QCompleter, QLCDNumber
 from PyQt5 import QtCore
 
-import settings
 
 import tushare as ts
 from decimal import  *
 
 from .MainWindowView import Ui_MainWindow
 from .MainWindowModel import MainWindowModel
-from settings import logger
+from .. import settings
 from ..financial import IndustryFormWidget
 from ..macro.MacroWidgetControl import MacroFormWidget
 from ..news.NewsWidgetControl import NewsWidget
 from ..optional import OptionalFormWidget
+from ..settings import logger
 from ..stockfundment import StockFundamentControl
 from ..strategies import BrokerWidget
 
@@ -128,7 +129,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         logger.debug("窗体关闭")
 
     def showStockDialog(self):
-        logger.info("show stock dialog",self.lineEdit.text())
+        logger.info(("show stock dialog",self.lineEdit.text()))
         self.ts_code=None
         self.fund_code=None
         ts_codes = self.stock_basic.loc[self.stock_basic['abbrevation']== self.lineEdit.text()].ts_code

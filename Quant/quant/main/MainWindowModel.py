@@ -1,5 +1,5 @@
-# 20231117
-# data
+# xshx add 20231117
+# xshx mod 20240307
 import os
 import datetime
 
@@ -11,8 +11,9 @@ import tushare as ts
 import xpinyin
 from xpinyin import  Pinyin
 
-from db import DataManager
-from settings import logger
+
+from quant.db import DataManager
+from quant.settings import logger
 
 
 class MainWindowModel():
@@ -24,7 +25,7 @@ class MainWindowModel():
         self.getAbbrevationList()
         logger.info("data ready")
     def getAbbrevationList(self):
-        logger.debug("创建缩写词")
+        logger.info("创建缩写词")
         # self.abbrevationStockList = list( self.dm.stock_basic['name'].apply(DataManager.getAbbrevation) )
         # self.abbrevationFundList = list( self.dm.fund_basic['name'].apply(DataManager.getAbbrevation) )
         self.stock_basic['abbrevation'] = self.stock_basic['name'].apply(DataManager.getAbbrevation)

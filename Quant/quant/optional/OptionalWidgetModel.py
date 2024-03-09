@@ -17,24 +17,29 @@ class OptionalWidgetModel( ):
 
 
     def getOptional(self):
-        logger.debug("getOptional")
+        logger.info("getOptional")
         df = pd.DataFrame( )
         items =self.collection.find()
         for item in items:
             print( item )
             row = pd.DataFrame.from_dict([item])
             df=df.append(row, ignore_index=True)
+        logger.info( df.columns )
+        if not df.empty:
+            df.drop('_id', axis=1, inplace=True)
         return  df
 
     def addOptional(self, new_optional):
-        logger.debug( "addOptional", new_optional)
+        logger.info(( "addOptional", new_optional))
         result = self.collection.insert_one(new_optional)
-        logger.info("add Optional", result)
+        logger.info(("add Optional", result))
 
-    def updateOptional(self, new_optional):
-        logger.debug("update optional")
-        # try:
-        #     new_optional.to_sql( 'optional', self.engine, index=False, if_exists='replace')
-        # except Exception as e:
-        #     logger.debug(("error ", e))
+    def updateOptional(self, newOptional):
+        logger.info("update optional")
+        # 先删除全部数据集
+        result=self.collection.delete_many({})
+        # 再写入
+        for index, row in newOptional.iterrows():
+            logger(index, row, row.to_dict())
+            result = self.collection.insert_one( row.to_dict() )
         return

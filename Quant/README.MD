@@ -1,5 +1,7 @@
 ## 开发环境配置
 
+adb install mongodb 
+直接安装 mongodb
 ## 生产环境配置
 linux 环境
 ###1.导出开发环境的配置

@@ -1,3 +1,4 @@
+# xshx add 20240308
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QColor, QPalette, QIcon, QCursor
 from PyQt5.QtWidgets import QWidget, QAbstractItemView, QHeaderView, QTableWidgetItem, QLineEdit, QMenu, \
@@ -25,7 +26,8 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
     def initWidget(self):
         # primary 列中的数据读取为str
         self.data =  self.model.getOptional()
-
+        if self.data.empty:
+            self.data= pd.DataFrame( data=None, columns=settings.optional_columns)
         table_rows = self.data.shape[0]
         table_columns = self.data.shape[1]
         input_table_header = self.data.columns.values.tolist()
@@ -76,6 +78,8 @@ class OptionalFormWidget(QWidget, Optional_Ui_Form):
     def updateTableWidget(self):
         logger.debug("update optional table widget")
         self.data = self.model.getOptional()
+        if self.data.empty:
+            return
         self.primaylist = self.data['primary'].tolist()
         logger.info(self.primaylist)
         if len(self.primaylist)==0:

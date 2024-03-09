@@ -6,6 +6,9 @@ import pandas as pd
 from xpinyin import Pinyin
 
 # 用元类实现单例模式  , 用来保存数据库连接, 和tushare 的验证码
+# from ..settings import logger
+
+
 class DataManager(metaclass=SingleMetaBase):
     settings = {
         "host": 'mongodb://localhost:27017',
@@ -16,8 +19,8 @@ class DataManager(metaclass=SingleMetaBase):
         self.client = MongoClient(DataManager.settings['host'])
         self.db = self.client[DataManager.settings['db_name']]
         self.pro = ts.pro_api("5bf581802c21c8792cf2cf75d44e989d8fa484595252fe8be3399f88")
-        self.stock_basic = self.pro.stock_basic().head(100)
-        self.fund_basic = self.pro.fund_basic(market='E').head(100)
+        self.stock_basic = self.pro.stock_basic()
+        self.fund_basic = self.pro.fund_basic(market='E')
 
 
     # 将名称转成拼音
