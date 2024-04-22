@@ -43,3 +43,14 @@ class IndustryWidgetModel( ):
         stock_board_cons_ths_df['流通市值'] = stock_board_cons_ths_df['流通市值'].apply(lambda x: str(x) + '亿')
 
         return  stock_board_cons_ths_df
+    # 获取股息率和pe 的排名数据
+    def get_ratio_and_pe(self):
+        # 描述：获取全部股票每日重要的基本面指标，可用于选股分析、报表展示等。
+        df =self.pro.daily_basic()
+        stock_basic2=self.stock_basic[['ts_code','name']]
+        df2=stock_basic2.merge(df)
+        df2['dv_ratio'] =df2['dv_ratio'].astype(float)
+        df2['pe']=df2['pe'].astype(float)
+        # df2.sort_values('dv_ratio',ascending=False, inplace=True)
+        # df2.to_excel('df2.xlsx')
+        return  df2

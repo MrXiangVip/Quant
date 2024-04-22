@@ -3,8 +3,8 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QHeaderView, QAbstractItemView, QTableWidgetItem
 
-from forecast.ForecastVipDialog import ForecastVip_Ui_Dialog
-from forecast.ForecastVipModel import ForecastVipModel
+from quant.financial.ForecastVipDialog import ForecastVip_Ui_Dialog
+from quant.financial.ForecastVipModel import ForecastVipModel
 
 from settings import logger
 

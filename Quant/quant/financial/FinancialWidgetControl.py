@@ -3,11 +3,10 @@ from PyQt5.QtWidgets import QWidget, QAbstractItemView, QHeaderView, QTableWidge
 
 import datetime
 
-from settings import logger
 
-from .BrokerWidgetView import *
-from .BrokerWidgetModel import *
-from forecast.ForecastVipDialogControl import ForecastVipDialogControl
+from .FinancialWidgetView import *
+from .FinancialWidgetModel import *
+from quant.financial.ForecastVipDialogControl import ForecastVipDialogControl
 
 
 class BrokerWidget(QWidget, Broker_Ui_Form):
@@ -35,17 +34,24 @@ class BrokerWidget(QWidget, Broker_Ui_Form):
 
         self.pushButton.setText("业绩预告")
         self.pushButton.clicked.connect( self.showForecastVipDialog )
+
+        self.pushButton_2.setText("财务指标")
+        self.pushButton_2.clicked.connect(self.showIndicatorDialog )
         self.updateWindow( today )
+
+
+
     def updateWindow(self, date ):
         logger.debug("update window")
         # self.data = DataManager().getBrokerReport( date )
         if isinstance(date, QDate):
             date = date.toPyDate()
-        self.data = self.model.getBrokerReportData( date )
+        # self.data = self.model.getBrokerReportData( date )
+        self.data = self.model.get_forecast_vip(  )
         # 删除日期这列
         if self.data.empty :
             return
-        self.data.drop( labels='report_date', axis =1, inplace=True )
+        # self.data.drop( labels='report_date', axis =1, inplace=True )
         self.table_rows = self.data.shape[0]
         table_columns = self.data.shape[1]
         input_table_header = self.data.columns.values.tolist()
@@ -83,3 +89,6 @@ class BrokerWidget(QWidget, Broker_Ui_Form):
     def showForecastVipDialog(self):
         self.forecast_vip_dialog = ForecastVipDialogControl()
         self.forecast_vip_dialog.show()
+
+    def showIndicatorDialog(self):
+        logger.info("showIndicatorDialog")

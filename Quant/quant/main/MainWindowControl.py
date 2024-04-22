@@ -12,13 +12,13 @@ from decimal import  *
 from .MainWindowView import Ui_MainWindow
 from .MainWindowModel import MainWindowModel
 from .. import settings
-from ..financial import IndustryFormWidget
+from ..financial.FinancialWidgetControl import BrokerWidget
 from ..macro.MacroWidgetControl import MacroFormWidget
 from ..news.NewsWidgetControl import NewsWidget
 from ..optional import OptionalFormWidget
 from ..settings import logger
 from ..stockfundment import StockFundamentControl
-from ..strategies import BrokerWidget
+from ..strategies.IndustryWidgetControl import IndustryFormWidget
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -52,7 +52,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tabWidget.addTab(self.tab, "")
         # 财报
         # self.tab_2 = QtWidgets.QWidget()
-        self.tab_2 = IndustryFormWidget(self)
+        self.tab_2 = BrokerWidget(self)
         self.tab_2.setObjectName("tab_2")
         self.tabWidget.addTab(self.tab_2, "")
         # 新闻
@@ -62,7 +62,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tabWidget.addTab(self.tab_3, "")
         # 策略
         # self.tab_4 = QtWidgets.QWidget()
-        self.tab_4 = BrokerWidget(self)
+        self.tab_4 = IndustryFormWidget(self)
         self.tab_4.setObjectName("tab_4")
         self.tabWidget.addTab(self.tab_4, "")
         # 宏观

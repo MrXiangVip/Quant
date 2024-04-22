@@ -1,18 +1,15 @@
 #
 #
 #
-from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QDialog, QHeaderView
-import pandas as pd
+from PyQt5.QtWidgets import QDialog
 
 import settings
 
 from ..optional import OptionalWidgetModel
-from ..settings import logger
 from db import DataManager
 
-from .PandasModel import *
+from quant.utils.PandasModel import *
 from .StockFundamentModel import  *
 from .StockFundamentDialog import *
 
